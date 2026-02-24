@@ -1,7 +1,6 @@
 
-import { createRouteHandlerClient } from 'https://esm.sh/@supabase/auth-helpers-nextjs@0.10.0'
-import { cookies } from 'https://esm.sh/next@14.2.3/headers'
-import { NextResponse } from 'https://esm.sh/next@14.2.3/server'
+import { createClient } from '@supabase/supabase-js'
+import { NextResponse } from 'next/server'
 import { transferSchema } from '../../../lib/validators'
 import { proUserLimit, freeUserLimit } from '../../../lib/rate-limit'
 import { transferQueue } from '../../../lib/queue/config'
@@ -17,8 +16,10 @@ export async function POST(req: Request) {
 
   try {
     // 1. Authentication
-    const cookieStore = cookies()
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
     const {
       data: { session }
     } = await supabase.auth.getSession()
@@ -45,8 +46,8 @@ export async function POST(req: Request) {
     }
 
     // 4. Rate limiting (Tier-aware)
-    const limit = profile.subscription_tier === 'pro' 
-      ? proUserLimit 
+    const limit = profile.subscription_tier === 'pro'
+      ? proUserLimit
       : freeUserLimit
 
     const { success: rateLimitSuccess } = await (limit as any).limit(session.user.id)

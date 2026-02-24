@@ -8,10 +8,11 @@ export const ALLOWED_ORIGINS = [
   'localhost',
   'gestaltung.com',
   'gestaltung.ai',
-  window.location.hostname
+  ...(typeof window !== 'undefined' ? [window.location.hostname] : [])
 ];
 
 export function verifyRequestOrigin(): boolean {
+  if (typeof window === 'undefined') return true; // Server-side: skip origin check
   const hostname = window.location.hostname;
   return ALLOWED_ORIGINS.includes(hostname);
 }
