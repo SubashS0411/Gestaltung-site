@@ -1,0 +1,7 @@
+{
+  "name": "Gestaltung - Figma to Framer AI Porter",
+  "description": "Gestaltung is a professional SaaS platform that seamlessly transfers Figma designs to Framer code with built-in AI color psychology validation and accessibility auditing.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

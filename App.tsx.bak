@@ -1,0 +1,163 @@
+
+import React, { useState, useEffect } from 'react';
+// Fix: Use standard Latin characters for react-router-dom imports to ensure compatibility with the build environment
+import { HashRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ExportDetail from './pages/ExportDetail';
+import Leaderboard from './pages/Leaderboard';
+import TemplateMarketplace from './pages/Marketplace';
+import Community from './pages/Community';
+import Mentorship from './pages/Mentorship';
+import MentorAnalytics from './pages/MentorAnalytics';
+import About from './pages/About';
+import { User } from './types';
+import { supabase } from './lib/supabase';
+import { BrandLogo } from './components/ui/BrandLogo';
+
+const App: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          name: session.user.user_metadata?.full_name
+        });
+      }
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          name: session.user.user_metadata?.full_name
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <BrandLogo size={48} idSuffix="loader" className="animate-pulse" />
+          <div className="font-luxury text-[8px] text-neutral-800 tracking-[1em] uppercase mt-8">Synchronizing Node</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Router>
+      <div className="flex flex-col min-h-screen selection:bg-[#C5A059] selection:text-black bg-black">
+        <header className={`fixed top-0 left-0 w-full z-[100] transition-all duration-700 ${scrolled ? 'glass-morphism h-20 px-12' : 'h-32 px-12'}`}>
+          <div className="max-w-[1800px] mx-auto flex justify-between items-center h-full">
+            <Link to="/" className="flex items-center gap-6 group">
+              <BrandLogo size={24} idSuffix="nav" className="transition-all group-hover:scale-110" />
+              <div className="flex flex-col border-l border-white/5 pl-6">
+                <span className="font-luxury text-[12px] text-white tracking-[0.5em] uppercase">Gestaltung</span>
+                <span className="text-[6px] font-black text-[#C5A059] uppercase tracking-[0.8em] opacity-40">Black Edition</span>
+              </div>
+            </Link>
+            
+            <nav className="hidden lg:flex items-center gap-16 text-[8px] font-black uppercase tracking-[0.5em] text-neutral-500">
+              <Link to="/marketplace" className="hover:text-white transition-colors">Registry</Link>
+              <Link to="/community" className="hover:text-white transition-colors">Node Hub</Link>
+              <Link to="/mentorship" className="hover:text-white transition-colors">Academy</Link>
+              <Link to="/about" className="hover:text-white transition-colors">Foundry</Link>
+              <div className="h-4 w-px bg-white/10 mx-4"></div>
+              {user ? (
+                <>
+                  <Link to="/dashboard" className="text-[#C5A059] hover:text-white transition-colors">Workstation</Link>
+                  <button onClick={() => {
+                    supabase.auth.signOut();
+                    window.location.href = '/';
+                  }} className="hover:text-red-500 transition-colors">Disconnect</button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="hover:text-white transition-colors">Access</Link>
+                  <Link to="/signup" className="px-10 py-3 border border-[#C5A059]/40 text-[#C5A059] font-black hover:bg-[#C5A059] hover:text-black transition-all">
+                    Register
+                  </Link>
+                </>
+              )}
+            </nav>
+          </div>
+        </header>
+
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
+            <Route path="/signup" element={user ? <Navigate to="/dashboard" /> : <Signup setUser={setUser} />} />
+            <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
+            <Route path="/export/:id" element={user ? <ExportDetail user={user} /> : <Navigate to="/login" />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/marketplace" element={<TemplateMarketplace />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/mentorship" element={<Mentorship />} />
+            <Route path="/dashboard/mentor/analytics" element={user ? <MentorAnalytics /> : <Navigate to="/login" />} />
+          </Routes>
+        </main>
+
+        <footer className="bg-black border-t border-white/[0.03] py-32 px-12">
+          <div className="max-w-[1800px] mx-auto flex flex-col md:flex-row justify-between items-start gap-24">
+             <div className="flex flex-col items-start max-w-sm">
+               <div className="flex items-center gap-6 mb-12">
+                 <BrandLogo size={32} idSuffix="footer" />
+                 <span className="font-luxury text-[18px] text-white tracking-[0.6em] uppercase">Gestaltung</span>
+               </div>
+               <p className="text-neutral-600 text-[9px] font-black leading-loose uppercase tracking-[0.4em]">
+                 The ultimate high-fidelity transmission protocol for elite designers and architects.
+               </p>
+             </div>
+             <div className="flex gap-32">
+                <div className="flex flex-col gap-8">
+                   <h5 className="text-[8px] font-black text-[#C5A059] mb-4 tracking-[0.8em] uppercase">Core Protocols</h5>
+                   {/* Fix: Resolved Cyrillic 'і' typo in closing Link tag */}
+                   <Link to="/about" className="text-neutral-500 hover:text-white text-[9px] font-black uppercase tracking-widest transition-colors">Neural Sync</Link>
+                   <Link to="/community" className="text-neutral-500 hover:text-white text-[9px] font-black uppercase tracking-widest transition-colors">Atomic Port</Link>
+                   <Link to="/marketplace" className="text-neutral-500 hover:text-white text-[9px] font-black uppercase tracking-widest transition-colors">Registry</Link>
+                </div>
+                <div className="flex flex-col gap-8">
+                   <h5 className="text-[8px] font-black text-[#C5A059] mb-4 tracking-[0.8em] uppercase">Node Support</h5>
+                   <Link to="/mentorship" className="text-neutral-500 hover:text-white text-[9px] font-black uppercase tracking-widest transition-colors">Academy</Link>
+                   {/* Fix: Resolved Cyrillic 'і' typo in closing Link tag */}
+                   <Link to="/dashboard" className="text-neutral-500 hover:text-white text-[9px] font-black uppercase tracking-widest transition-colors">Terminal</Link>
+                </div>
+             </div>
+          </div>
+          <div className="max-w-[1800px] mx-auto mt-32 pt-16 border-t border-white/[0.03] flex justify-between items-center">
+             <p className="text-neutral-800 text-[8px] font-black uppercase tracking-[0.8em]">© 2025 GESTALTUNG BLACK EDITION. ALL RIGHTS RESERVED.</p>
+             <div className="flex items-center gap-10">
+                <span className="text-neutral-800 text-[8px] font-black uppercase tracking-[0.4em]">Node Ver: 4.1.0-BE</span>
+             </div>
+          </div>
+        </footer>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
