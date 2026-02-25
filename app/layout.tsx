@@ -4,6 +4,7 @@ import "./globals.css";
 import SmoothScroll from "@/components/layout/smooth-scroll";
 import CinematicNoise from "@/components/ui/cinematic-noise";
 import ScrollProgress from "@/components/ui/scroll-progress";
+import Navbar from "@/components/layout/navbar";
 
 const playfair = Playfair_Display({
     subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="en" className={`${playfair.variable} ${jetbrains.variable}`}>
             <body className="relative">
                 <SmoothScroll>
+                    <Navbar />
                     <ScrollProgress />
                     <CinematicNoise />
                     {children}

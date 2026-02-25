@@ -8,13 +8,11 @@ import FooterMicDrop from "@/components/sections/footer-mic-drop";
 import ScrollInterlude from "@/components/sections/scroll-interlude";
 import ProtocolGrid from "@/components/sections/protocol-grid";
 import Preloader from "@/components/ui/preloader";
-import Navbar from "@/components/layout/navbar";
 
 export default function Home() {
     return (
         <main className="bg-[#050505] min-h-screen selection:bg-[#D4AF37] selection:text-black">
             <Preloader onComplete={() => { }} />
-            <Navbar />
 
             {/* SECTION A: Atmospheric Hero */}
             <Hero />
