@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
@@ -70,6 +70,19 @@ export default function Hero() {
 
     return (
         <section ref={containerRef} className="relative h-[100dvh] flex items-center justify-center overflow-hidden">
+            {/* Cinematic background image */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src="/images/gold-neural-streams.png"
+                    alt=""
+                    className="w-full h-full object-cover opacity-30"
+                />
+                {/* Multi-layer overlays for text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-[#050505]/40" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/80 via-transparent to-[#050505]" />
+                <div className="absolute inset-0 bg-[#050505]/30" />
+            </div>
+
             <ParallaxText text="GESTALTUNG" />
 
             <motion.div
@@ -123,7 +136,7 @@ export default function Hero() {
                     A cinematic interface for validating design systems.
                     Built with precision. Engineered for atmosphere.
                     <br />
-                    <span className="text-xs text-white/50 mt-2 block">
+                    <span className="text-xs text-white/90 mt-2 block">
                         v2.4.0 • STABLE • SECURE CONNECTION
                     </span>
                 </motion.p>
@@ -154,7 +167,7 @@ export default function Hero() {
                 transition={{ delay: 2, duration: 1 }}
                 className="absolute bottom-8 flex flex-col items-center gap-2 z-10"
             >
-                <span className="font-mono text-[8px] text-white/30 tracking-[0.4em]">SCROLL</span>
+                <span className="font-mono text-[8px] text-white/80 tracking-[0.4em]">SCROLL</span>
                 <div className="h-8 w-[1px] relative overflow-hidden">
                     <motion.div
                         className="absolute top-0 w-full bg-gold/50"

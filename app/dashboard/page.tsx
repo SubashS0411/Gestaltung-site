@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { NODES, SYSTEM_UPDATES } from "@/lib/data";
@@ -22,13 +22,13 @@ export default function DashboardFeed() {
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                     <span className="font-mono text-[10px] text-gold tracking-[0.5em] block mb-2">LIVE FEED</span>
                     <h1 className="font-serif text-4xl text-white tracking-tight">Neural Network</h1>
-                    <p className="font-mono text-xs text-white/40 mt-2 tracking-wider">Real-time transmissions from the collective.</p>
+                    <p className="font-mono text-xs text-white/80 mt-2 tracking-wider">Real-time transmissions from the collective.</p>
                 </motion.div>
             </div>
 
             {/* System Updates */}
             <div className="mb-10 space-y-2">
-                <span className="font-mono text-[9px] text-white/30 tracking-[0.3em] block mb-3">SYSTEM UPDATES</span>
+                <span className="font-mono text-[9px] text-white/80 tracking-[0.3em] block mb-3">SYSTEM UPDATES</span>
                 {SYSTEM_UPDATES.map((u, i) => {
                     const Icon = updateIcons[u.type] || Zap;
                     return (
@@ -41,7 +41,7 @@ export default function DashboardFeed() {
                         >
                             <Icon className={`w-3.5 h-3.5 shrink-0 stroke-[1.5] ${u.type === "ALERT" ? "text-amber-400" : "text-gold/50"}`} />
                             <p className="font-mono text-[11px] text-white/60 tracking-wide flex-1">{u.message}</p>
-                            <span className="font-mono text-[8px] text-white/20 tracking-wider shrink-0">{u.time}</span>
+                            <span className="font-mono text-[8px] text-white/70 tracking-wider shrink-0">{u.time}</span>
                         </motion.div>
                     );
                 })}
@@ -49,7 +49,7 @@ export default function DashboardFeed() {
 
             {/* Node Cards */}
             <div className="space-y-4">
-                <span className="font-mono text-[9px] text-white/30 tracking-[0.3em] block mb-3">TRANSMISSIONS</span>
+                <span className="font-mono text-[9px] text-white/80 tracking-[0.3em] block mb-3">TRANSMISSIONS</span>
                 {NODES.map((node, i) => (
                     <motion.div
                         key={node.id}
@@ -67,7 +67,7 @@ export default function DashboardFeed() {
                                     </div>
                                     <div>
                                         <p className="font-mono text-[10px] text-white/70 tracking-wider">{node.author}</p>
-                                        <p className="font-mono text-[8px] text-white/25 tracking-wider">{node.role} · {node.timestamp}</p>
+                                        <p className="font-mono text-[8px] text-white/70 tracking-wider">{node.role} · {node.timestamp}</p>
                                     </div>
                                 </div>
                                 {node.hot && <div className="w-2 h-2 rounded-full bg-gold shadow-[0_0_8px_rgba(212,175,55,0.5)]" />}
@@ -82,7 +82,7 @@ export default function DashboardFeed() {
                                 animate={{ height: activeNodeId === node.id ? "auto" : 0, opacity: activeNodeId === node.id ? 1 : 0 }}
                                 className="overflow-hidden"
                             >
-                                <p className="font-mono text-[11px] text-white/50 leading-relaxed tracking-wide mb-4">
+                                <p className="font-mono text-[11px] text-white/90 leading-relaxed tracking-wide mb-4">
                                     {node.content}
                                 </p>
                             </motion.div>
@@ -94,7 +94,7 @@ export default function DashboardFeed() {
                                         <span key={tag} className="tag-pill text-[7px]">{tag}</span>
                                     ))}
                                 </div>
-                                <div className="flex items-center gap-4 font-mono text-[9px] text-white/25">
+                                <div className="flex items-center gap-4 font-mono text-[9px] text-white/70">
                                     <span className="flex items-center gap-1"><Heart className="w-3 h-3 stroke-[1.5]" />{node.likes}</span>
                                     <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3 stroke-[1.5]" />{node.replies}</span>
                                     <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-gold/40 transition-colors" />

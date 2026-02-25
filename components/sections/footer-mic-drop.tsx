@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import MagneticButton from "../ui/magnetic-button";
 import Link from "next/link";
@@ -28,7 +28,7 @@ export default function FooterMicDrop() {
             </div>
 
             {/* Footer Meta */}
-            <div className="absolute bottom-8 left-8 right-8 flex justify-between font-mono text-[11px] text-white/40 uppercase tracking-widest">
+            <div className="absolute bottom-8 left-8 right-8 flex justify-between font-mono text-[11px] text-white/80 uppercase tracking-widest">
                 <span>© 2026 GESTALTUNG SYSTEMS</span>
                 <div className="hidden md:flex gap-6">
                     <Link href="/registry" className="hover:text-gold transition-colors duration-300">REGISTRY</Link>

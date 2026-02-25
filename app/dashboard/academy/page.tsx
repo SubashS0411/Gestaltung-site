@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { ACADEMY_COURSES } from "@/lib/data";
@@ -10,7 +10,7 @@ export default function DashboardAcademyPage() {
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
                 <span className="font-mono text-[10px] text-gold tracking-[0.5em] block mb-2">LEARNING</span>
                 <h1 className="font-serif text-4xl text-white tracking-tight">Academy</h1>
-                <p className="font-mono text-xs text-white/40 mt-2 tracking-wider">Structured learning protocols for the collective.</p>
+                <p className="font-mono text-xs text-white/80 mt-2 tracking-wider">Structured learning protocols for the collective.</p>
             </motion.div>
 
             <div className="space-y-4">
@@ -38,11 +38,11 @@ export default function DashboardAcademyPage() {
                                             }`}>{course.difficulty}</span>
                                     </div>
                                     <h3 className="font-serif text-lg text-white/90 group-hover:text-gold transition-colors duration-500 mb-2">{course.title}</h3>
-                                    <p className="font-mono text-[10px] text-white/40 tracking-wide leading-relaxed">{course.description}</p>
+                                    <p className="font-mono text-[10px] text-white/80 tracking-wide leading-relaxed">{course.description}</p>
                                 </div>
 
                                 <div className="flex items-center justify-between mt-4">
-                                    <div className="flex gap-4 font-mono text-[9px] text-white/30 tracking-wider">
+                                    <div className="flex gap-4 font-mono text-[9px] text-white/80 tracking-wider">
                                         <span className="flex items-center gap-1"><Clock className="w-3 h-3 stroke-[1.5]" />{course.duration}</span>
                                         <span className="flex items-center gap-1"><BookOpen className="w-3 h-3 stroke-[1.5]" />{course.lessons} lessons</span>
                                         <span>by {course.instructor}</span>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion, useInView } from "framer-motion";
 import type { ReactNode } from "react";
@@ -39,7 +39,7 @@ export default function PageShell({ children, sectionNumber, title, subtitle }: 
                             <span className="font-mono text-[9px] text-gold tracking-[0.4em]">SECTION {sectionNumber}</span>
                         </div>
                         <Reveal><h1 className="font-serif text-4xl md:text-6xl lg:text-7xl tracking-[0.08em] text-white">{title}</h1></Reveal>
-                        <p className="font-mono text-xs text-white/40 tracking-[0.2em] mt-3 max-w-lg">{subtitle}</p>
+                        <p className="font-mono text-xs text-white/80 tracking-[0.2em] mt-3 max-w-lg">{subtitle}</p>
                         <motion.div
                             initial={{ scaleX: 0 }}
                             animate={{ scaleX: 1 }}

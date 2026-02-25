@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -75,7 +75,7 @@ function NodeCard({ node, index }: { node: typeof nodes[0]; index: number }) {
                 </p>
                 <div className="flex items-center gap-3 pt-2">
                     <div className="w-2 h-2 rounded-full bg-gold/60" />
-                    <span className="font-mono text-[10px] text-white/40 tracking-wider">{node.coord}</span>
+                    <span className="font-mono text-[10px] text-white/80 tracking-wider">{node.coord}</span>
                 </div>
             </div>
         </motion.div>
@@ -90,7 +90,7 @@ export default function NeuralNodes() {
                 <div className="text-center mb-8">
                     <span className="font-mono text-[10px] text-gold tracking-[0.5em] mb-4 block">INFRASTRUCTURE</span>
                     <h2 className="font-serif text-5xl md:text-7xl text-white tracking-tight">Neural Nodes</h2>
-                    <p className="font-mono text-sm text-white/50 mt-4 max-w-lg mx-auto tracking-wide">
+                    <p className="font-mono text-sm text-white/90 mt-4 max-w-lg mx-auto tracking-wide">
                         The distributed backbone powering every design validation across the network.
                     </p>
                 </div>

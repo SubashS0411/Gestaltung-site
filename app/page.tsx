@@ -24,6 +24,7 @@ export default function Home() {
                 topText="THE PROTOCOL"
                 headline="Precision engineered for the void."
                 subtext="A digital experience that feels heavy, expensive, and inevitable. Every interaction carries weight."
+                backgroundImage="/images/gold-hexagon-grid.png"
             />
 
             {/* SECTION B: The Manifesto */}
@@ -38,6 +39,7 @@ export default function Home() {
                 headline="Where design meets engineering."
                 subtext="Three neural nodes. Twelve regions. Sub-millisecond latency. The backbone of cinematic validation."
                 gradient="radial-gradient(ellipse 70% 50% at 50% 40%, rgba(212,175,55,0.04) 0%, transparent 70%)"
+                backgroundImage="/images/gold-pulse-particles.png"
             />
 
             {/* SECTION D: Neural Nodes (Zig-Zag with images) */}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import PageShell from "@/components/layout/page-shell";
 import { motion, useInView } from "framer-motion";
@@ -64,7 +64,7 @@ export default function AboutPage() {
                         <Reveal delay={i * 0.1}>
                             <h3 className="font-serif text-lg text-white tracking-wide mb-2">{p.title}</h3>
                         </Reveal>
-                        <p className="font-mono text-[10px] text-white/50 leading-relaxed tracking-wider">{p.desc}</p>
+                        <p className="font-mono text-[10px] text-white/90 leading-relaxed tracking-wider">{p.desc}</p>
                     </motion.div>
                 ))}
             </div>
@@ -83,7 +83,7 @@ export default function AboutPage() {
                             className="flex gap-6 py-4 border-b border-white/[0.06]"
                         >
                             <span className="font-serif text-2xl text-gold/60 shrink-0 w-16">{t.year}</span>
-                            <p className="font-mono text-[11px] text-white/50 leading-relaxed tracking-wider">{t.event}</p>
+                            <p className="font-mono text-[11px] text-white/90 leading-relaxed tracking-wider">{t.event}</p>
                         </motion.div>
                     ))}
                 </div>

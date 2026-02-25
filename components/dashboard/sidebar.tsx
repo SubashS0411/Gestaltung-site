@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -37,7 +37,7 @@ export default function DashboardSidebar() {
                     </div>
                     <div>
                         <p className="font-mono text-[10px] text-white/80 tracking-wider">{user?.name || "UNKNOWN"}</p>
-                        <p className="font-mono text-[8px] text-white/30 tracking-wider">{user?.role || "GUEST"}</p>
+                        <p className="font-mono text-[8px] text-white/80 tracking-wider">{user?.role || "GUEST"}</p>
                     </div>
                 </div>
             </div>
@@ -58,9 +58,9 @@ export default function DashboardSidebar() {
                             {/* Gold dot */}
                             <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${active ? "bg-gold shadow-[0_0_8px_rgba(212,175,55,0.6)]" : "bg-white/10 group-hover:bg-white/20"
                                 }`} />
-                            <item.icon className={`w-4 h-4 stroke-[1.5] transition-colors duration-300 ${active ? "text-gold" : "text-white/30 group-hover:text-white/50"
+                            <item.icon className={`w-4 h-4 stroke-[1.5] transition-colors duration-300 ${active ? "text-gold" : "text-white/80 group-hover:text-white/90"
                                 }`} />
-                            <span className={`font-mono text-[9px] tracking-[0.2em] transition-colors duration-300 ${active ? "text-gold" : "text-white/40 group-hover:text-white/60"
+                            <span className={`font-mono text-[9px] tracking-[0.2em] transition-colors duration-300 ${active ? "text-gold" : "text-white/80 group-hover:text-white/60"
                                 }`}>
                                 {item.label}
                             </span>
@@ -73,7 +73,7 @@ export default function DashboardSidebar() {
             <div className="p-4 border-t border-white/[0.04]">
                 <button
                     onClick={logout}
-                    className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-white/20 hover:text-white/50 hover:bg-white/[0.03] transition-all duration-300"
+                    className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-white/70 hover:text-white/90 hover:bg-white/[0.03] transition-all duration-300"
                 >
                     <LogOut className="w-4 h-4 stroke-[1.5]" />
                     <span className="font-mono text-[9px] tracking-[0.2em]">DISCONNECT</span>
@@ -84,7 +84,7 @@ export default function DashboardSidebar() {
             <div className="px-6 py-4 border-t border-white/[0.04]">
                 <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="font-mono text-[8px] text-white/20 tracking-wider">SYSTEM ONLINE</span>
+                    <span className="font-mono text-[8px] text-white/70 tracking-wider">SYSTEM ONLINE</span>
                 </div>
             </div>
         </aside>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import PageShell from "@/components/layout/page-shell";
 import { motion } from "framer-motion";
@@ -55,7 +55,7 @@ export default function FoundryPage() {
                                     </h3>
                                 </div>
 
-                                <div className="flex items-center gap-1 font-mono text-[8px] text-white/50 tracking-wider">
+                                <div className="flex items-center gap-1 font-mono text-[8px] text-white/90 tracking-wider">
                                     <Download className="w-3 h-3 stroke-[1.5]" />
                                     <span>{t.downloads}</span>
                                 </div>

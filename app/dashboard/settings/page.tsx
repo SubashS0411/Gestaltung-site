@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { useAuthStore } from "@/lib/store";
@@ -33,7 +33,7 @@ export default function DashboardSettingsPage() {
                         </div>
                         <div>
                             <h3 className="font-mono text-[10px] text-white/70 tracking-[0.2em] mb-1">{s.label}</h3>
-                            <p className="font-mono text-[10px] text-white/35 tracking-wider">{s.desc}</p>
+                            <p className="font-mono text-[10px] text-white/80 tracking-wider">{s.desc}</p>
                         </div>
                     </motion.div>
                 ))}

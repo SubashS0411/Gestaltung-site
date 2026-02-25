@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -21,7 +21,7 @@ export default function Manifesto() {
                     <motion.div style={{ opacity }} className="space-y-4 text-right">
                         <span className="font-mono text-[10px] text-gold tracking-[0.5em] block">THE MANIFESTO</span>
                         <div className="w-32 h-[1px] bg-gradient-to-l from-gold/30 to-transparent ml-auto" />
-                        <p className="font-mono text-xs text-white/40 tracking-wider leading-relaxed max-w-xs ml-auto">
+                        <p className="font-mono text-xs text-white/80 tracking-wider leading-relaxed max-w-xs ml-auto">
                             We believe interfaces should carry weight.
                             Not the weight of complexity — the weight of intention.
                             Every transition, every hover state, every scroll interaction
@@ -64,7 +64,7 @@ export default function Manifesto() {
                     >
                         THE INTERSECTION OF INTELLIGENCE AND AESTHETICS.
                         <br />
-                        <span className="text-white/40 text-xs mt-2 block">SYSTEM.LOG(INIT_MANIFESTO_PROTOCOL)</span>
+                        <span className="text-white/80 text-xs mt-2 block">SYSTEM.LOG(INIT_MANIFESTO_PROTOCOL)</span>
                     </motion.p>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
@@ -81,7 +81,7 @@ export default function NeuralHub() {
                     <Reveal>
                         <h2 className="font-serif text-4xl md:text-6xl tracking-[0.06em] text-white">NEURAL HUB</h2>
                     </Reveal>
-                    <p className="font-mono text-xs text-white/40 tracking-[0.15em] mt-3">
+                    <p className="font-mono text-xs text-white/80 tracking-[0.15em] mt-3">
                         System monitoring interface — real-time diagnostics
                     </p>
                     <div className="mt-6 h-[1px] w-full bg-gradient-to-r from-gold/25 via-gold/8 to-transparent" />
@@ -103,9 +103,9 @@ export default function NeuralHub() {
                                 <div className="p-2.5 rounded-lg bg-white/[0.04]">
                                     <card.icon className={`w-5 h-5 stroke-[1.5] ${card.accent}`} />
                                 </div>
-                                <span className="font-mono text-[9px] text-white/20 tracking-wider">0{i + 1}</span>
+                                <span className="font-mono text-[9px] text-white/70 tracking-wider">0{i + 1}</span>
                             </div>
-                            <p className="font-mono text-[10px] text-white/40 tracking-[0.15em] mb-1.5">{card.title}</p>
+                            <p className="font-mono text-[10px] text-white/80 tracking-[0.15em] mb-1.5">{card.title}</p>
                             <p className="font-serif text-2xl text-white tracking-wide mb-4">{card.value}</p>
                             <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
                                 <motion.div
@@ -135,7 +135,7 @@ export default function NeuralHub() {
                                     </div>
 
                                     {/* Console Output */}
-                                    <div className="flex-1 font-mono text-xs space-y-3 overflow-hidden text-white/50">
+                                    <div className="flex-1 font-mono text-xs space-y-3 overflow-hidden text-white/90">
                                         {feed.map((line, i) => (
                                             <motion.div
                                                 key={i}
@@ -164,7 +164,7 @@ export default function NeuralHub() {
                             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                             className="bg-obsidian border border-white/10 hover:border-gold/40 rounded-lg p-6 flex flex-col justify-between group cursor-crosshair"
                         >
-                            <h4 className="font-mono text-[10px] text-white/40 tracking-widest">SYSTEM STATUS</h4>
+                            <h4 className="font-mono text-[10px] text-white/80 tracking-widest">SYSTEM STATUS</h4>
                             <div className="text-right">
                                 <div className="font-serif text-4xl text-white">Optimal</div>
                                 <div className="text-gold text-xs font-mono mt-1">NO LATENCY DETECTED</div>
@@ -177,7 +177,7 @@ export default function NeuralHub() {
                             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                             className="bg-obsidian border border-white/10 hover:border-gold/40 rounded-lg p-6 flex flex-col justify-between group cursor-crosshair"
                         >
-                            <h4 className="font-mono text-[10px] text-white/40 tracking-widest">NODE CONNECTIONS</h4>
+                            <h4 className="font-mono text-[10px] text-white/80 tracking-widest">NODE CONNECTIONS</h4>
                             <div className="text-right">
                                 <div className="font-serif text-4xl text-white">482</div>
                                 <div className="text-green-500 text-xs font-mono mt-1">SECURE ENCRYPTION</div>
@@ -203,15 +203,15 @@ export default function NeuralHub() {
                         </div>
 
                         <div className="mb-5">
-                            <label className="font-mono text-[9px] text-white/35 tracking-[0.15em] mb-2 block">QUERY PROTOCOL</label>
-                            <div className="bg-black/40 border border-white/[0.06] rounded-lg py-3.5 px-4 font-mono text-[12px] text-white/50 min-h-[48px] flex items-center">
+                            <label className="font-mono text-[9px] text-white/80 tracking-[0.15em] mb-2 block">QUERY PROTOCOL</label>
+                            <div className="bg-black/40 border border-white/[0.06] rounded-lg py-3.5 px-4 font-mono text-[12px] text-white/90 min-h-[48px] flex items-center">
                                 <span>{typewriterText}</span>
                                 <span className="animate-pulse text-gold ml-0.5">▎</span>
                             </div>
                         </div>
 
                         <div className="p-4 rounded-lg bg-black/25 border border-white/[0.05] mb-5">
-                            <p className="font-serif text-[13px] italic text-white/40 leading-relaxed">
+                            <p className="font-serif text-[13px] italic text-white/80 leading-relaxed">
                                 &ldquo;Every pixel must breathe. The interface should feel heavy, cinematic, and atmospheric.&rdquo;
                             </p>
                         </div>
@@ -220,14 +220,14 @@ export default function NeuralHub() {
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Shield className="w-3.5 h-3.5 text-emerald-400/60 stroke-[1.5]" />
-                                    <span className="font-mono text-[10px] text-white/40 tracking-wider">SECURE</span>
+                                    <span className="font-mono text-[10px] text-white/80 tracking-wider">SECURE</span>
                                 </div>
                                 <span className="font-mono text-[10px] text-emerald-400/60">ACTIVE</span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Wifi className="w-3.5 h-3.5 text-gold/40 stroke-[1.5]" />
-                                    <span className="font-mono text-[10px] text-white/40 tracking-wider">LATENCY</span>
+                                    <span className="font-mono text-[10px] text-white/80 tracking-wider">LATENCY</span>
                                 </div>
                                 <span className="font-mono text-[10px] text-gold/60">12ms</span>
                             </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { Copy, Check, Terminal, Cpu, Box, Fingerprint } from "lucide-react";
@@ -60,13 +60,13 @@ export default function ProtocolGrid() {
                             onClick={copyProtocol}
                             className="group flex items-center gap-3 px-6 py-3 rounded-full border border-white/10 hover:border-gold/30 bg-white/[0.02] hover:bg-gold/[0.05] transition-all duration-500"
                         >
-                            <span className="font-mono text-[10px] text-white/50 group-hover:text-gold tracking-[0.2em] transition-colors">
+                            <span className="font-mono text-[10px] text-white/90 group-hover:text-gold tracking-[0.2em] transition-colors">
                                 COPY_SPEC
                             </span>
                             {copied ? (
                                 <Check className="w-3.5 h-3.5 text-emerald-400" />
                             ) : (
-                                <Copy className="w-3.5 h-3.5 text-white/30 group-hover:text-gold transition-colors" />
+                                <Copy className="w-3.5 h-3.5 text-white/80 group-hover:text-gold transition-colors" />
                             )}
                         </button>
                     </div>
@@ -96,7 +96,7 @@ export default function ProtocolGrid() {
                                 </div>
                                 <div>
                                     <div className="w-full h-px bg-white/[0.06] mb-6 group-hover:bg-gold/20 transition-colors duration-500" />
-                                    <p className="font-mono text-[10px] text-white/40 leading-relaxed tracking-wide">
+                                    <p className="font-mono text-[10px] text-white/80 leading-relaxed tracking-wide">
                                         {spec.desc}
                                     </p>
                                 </div>

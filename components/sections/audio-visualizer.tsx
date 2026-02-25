@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -199,7 +199,7 @@ export default function AudioVisualizer() {
                         <span className="font-mono text-[9px] text-gold tracking-[0.3em]">PHYSICS ENGINE ACTIVE</span>
                     </div>
                     <h3 className="font-serif text-4xl text-white/90 tracking-wide mb-2">Harmonic Resonance</h3>
-                    <p className="font-mono text-[10px] text-white/50 tracking-wider max-w-[200px]">
+                    <p className="font-mono text-[10px] text-white/90 tracking-wider max-w-[200px]">
                         Interact with the particle field. Simulation running at 60fps.
                     </p>
                 </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -60,7 +60,7 @@ export default function Assistant() {
                                 {msg.role === "assistant" ? (
                                     <Bot className="w-3 h-3 text-gold" />
                                 ) : (
-                                    <User className="w-3 h-3 text-white/50" />
+                                    <User className="w-3 h-3 text-white/90" />
                                 )}
                             </div>
                             <div className={`max-w-[85%] px-4 py-3 rounded-xl ${msg.role === "assistant"
@@ -87,11 +87,11 @@ export default function Assistant() {
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleSend()}
                         placeholder="Enter Protocol..."
-                        className="flex-1 bg-transparent font-mono text-[11px] text-white/80 tracking-wider placeholder:text-white/20 focus:outline-none"
+                        className="flex-1 bg-transparent font-mono text-[11px] text-white/80 tracking-wider placeholder:text-white/70 focus:outline-none"
                     />
                     <button
                         onClick={handleSend}
-                        className="text-white/20 hover:text-gold transition-colors duration-300"
+                        className="text-white/70 hover:text-gold transition-colors duration-300"
                     >
                         <Send className="w-3.5 h-3.5" />
                     </button>

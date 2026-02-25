@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -47,7 +47,7 @@ export default function AuthPage() {
                         <Hexagon className="w-16 h-16 text-gold stroke-[0.5]" />
                     </motion.div>
                     <h1 className="font-serif text-3xl text-white tracking-wide mb-2">Initialize Link</h1>
-                    <p className="font-mono text-[11px] text-white/40 tracking-wider text-center">
+                    <p className="font-mono text-[11px] text-white/80 tracking-wider text-center">
                         Authenticate to access the Neural Hub
                     </p>
                 </div>
@@ -63,14 +63,14 @@ export default function AuthPage() {
                         ].map((f) => (
                             <div key={f.label} className="flex flex-col items-center gap-2 py-3">
                                 <f.icon className="w-4 h-4 text-gold/40 stroke-[1.5]" />
-                                <span className="font-mono text-[7px] text-white/30 tracking-[0.2em]">{f.label}</span>
+                                <span className="font-mono text-[7px] text-white/80 tracking-[0.2em]">{f.label}</span>
                             </div>
                         ))}
                     </div>
 
                     {/* Input */}
                     <div>
-                        <label className="font-mono text-[9px] text-white/30 tracking-[0.2em] block mb-2">
+                        <label className="font-mono text-[9px] text-white/80 tracking-[0.2em] block mb-2">
                             OPERATOR CALLSIGN
                         </label>
                         <div className="flex items-center gap-2 bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-3 focus-within:border-gold/20 transition-colors">
@@ -81,7 +81,7 @@ export default function AuthPage() {
                                 onChange={(e) => setName(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                                 placeholder="Enter your callsign..."
-                                className="flex-1 bg-transparent font-mono text-sm text-white/80 tracking-wider placeholder:text-white/15 focus:outline-none"
+                                className="flex-1 bg-transparent font-mono text-sm text-white/80 tracking-wider placeholder:text-white/70 focus:outline-none"
                                 disabled={phase !== "idle"}
                             />
                         </div>
@@ -108,7 +108,7 @@ export default function AuthPage() {
                 </div>
 
                 {/* Footer */}
-                <p className="font-mono text-[9px] text-white/15 text-center mt-8 tracking-wider">
+                <p className="font-mono text-[9px] text-white/70 text-center mt-8 tracking-wider">
                     GESTALTUNG PROTOCOL v2.4.0 · ENCRYPTED CHANNEL
                 </p>
             </motion.div>

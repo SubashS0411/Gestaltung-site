@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -59,7 +59,7 @@ export default function Navbar() {
                                         ? "text-gold border border-gold/30 px-4 py-1.5 rounded hover:bg-gold hover:text-black"
                                         : isActive
                                             ? "text-gold"
-                                            : "text-white/40 hover:text-white"
+                                            : "text-white/80 hover:text-white"
                                     }`}
                             >
                                 {isActive && !isEnter && (
@@ -99,7 +99,7 @@ export default function Navbar() {
                                 <Link
                                     href={l.href}
                                     onClick={() => setOpen(false)}
-                                    className={`flex items-center gap-3 py-3 font-mono text-xs tracking-[0.2em] border-b border-white/[0.03] ${pathname === l.href ? "text-gold" : "text-white/30"
+                                    className={`flex items-center gap-3 py-3 font-mono text-xs tracking-[0.2em] border-b border-white/[0.03] ${pathname === l.href ? "text-gold" : "text-white/80"
                                         }`}
                                 >
                                     {pathname === l.href && <span className="w-1 h-1 rounded-full bg-gold" />}
