@@ -1,65 +1,102 @@
 "use client";
 
 import { motion } from "framer-motion";
-import ParallaxImage from "../ui/parallax-image";
+import Image from "next/image";
+import { useRef } from "react";
+import { useScroll, useTransform, useInView } from "framer-motion";
 
 const nodes = [
     {
         id: "01",
         title: "FIBER OPTICS",
+        desc: "High-bandwidth neural pathways for real-time design validation. Sub-millisecond latency across distributed nodes.",
         coord: "COORD: 45.22.11",
-        src: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop", // Abstract Tech
-        align: "left"
+        src: "/images/node-fiber.png",
+        align: "left" as const,
     },
     {
         id: "02",
         title: "SERVER CORE",
+        desc: "Redundant processing infrastructure powering the protocol engine. Self-healing architecture with zero-downtime deployments.",
         coord: "COORD: 89.10.33",
-        src: "https://images.unsplash.com/photo-1558494949-ef526b0042a0?q=80&w=2668&auto=format&fit=crop", // Server Room
-        align: "right"
+        src: "/images/node-server.png",
+        align: "right" as const,
     },
     {
         id: "03",
         title: "LIQUID METAL",
+        desc: "Adaptive interface rendering pipeline. Every surface responds to context, morphing between states with cinematic fluidity.",
         coord: "COORD: 12.00.99",
-        src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop", // Abstract Liquid
-        align: "left"
+        src: "/images/node-liquid.png",
+        align: "left" as const,
     }
 ];
 
+function NodeCard({ node, index }: { node: typeof nodes[0]; index: number }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const inView = useInView(ref, { once: true, margin: "-15%" });
+    const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+    const imgY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+
+    return (
+        <motion.div
+            ref={ref}
+            initial={{ opacity: 0, y: 60 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className={`flex flex-col md:flex-row ${node.align === "right" ? "md:flex-row-reverse" : ""} items-center gap-8 md:gap-16`}
+        >
+            {/* Image with parallax and gradient border */}
+            <div className="relative w-full md:w-5/12 aspect-[3/4] p-[1px] rounded-2xl overflow-hidden bg-gradient-to-b from-white/15 to-transparent">
+                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#050505]">
+                    <motion.div style={{ y: imgY }} className="absolute inset-[-10%] w-[120%] h-[120%]">
+                        <Image
+                            src={node.src}
+                            alt={node.title}
+                            fill
+                            className="object-cover opacity-90 hover:opacity-100 transition-opacity duration-700"
+                            sizes="(max-width: 768px) 100vw, 40vw"
+                        />
+                    </motion.div>
+                    {/* Bottom gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10" />
+                </div>
+            </div>
+
+            {/* Text content */}
+            <div className="w-full md:w-5/12 space-y-6">
+                <div className="flex items-center gap-3">
+                    <span className="font-mono text-[10px] text-gold tracking-[0.3em]">NODE_{node.id}</span>
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-gold/30 to-transparent" />
+                </div>
+                <h3 className="font-serif text-4xl md:text-5xl text-white tracking-wide leading-tight">{node.title}</h3>
+                <p className="font-mono text-sm text-white/60 leading-relaxed tracking-wide max-w-md">
+                    {node.desc}
+                </p>
+                <div className="flex items-center gap-3 pt-2">
+                    <div className="w-2 h-2 rounded-full bg-gold/60" />
+                    <span className="font-mono text-[10px] text-white/40 tracking-wider">{node.coord}</span>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
 export default function NeuralNodes() {
     return (
-        <section className="py-32 px-6">
-            <div className="container mx-auto space-y-32">
+        <section className="py-32 px-6 relative">
+            <div className="max-w-7xl mx-auto space-y-32">
+                {/* Section header */}
+                <div className="text-center mb-8">
+                    <span className="font-mono text-[10px] text-gold tracking-[0.5em] mb-4 block">INFRASTRUCTURE</span>
+                    <h2 className="font-serif text-5xl md:text-7xl text-white tracking-tight">Neural Nodes</h2>
+                    <p className="font-mono text-sm text-white/50 mt-4 max-w-lg mx-auto tracking-wide">
+                        The distributed backbone powering every design validation across the network.
+                    </p>
+                </div>
+
                 {nodes.map((node, i) => (
-                    <div key={node.id} className={`flex flex-col md:flex-row ${node.align === 'right' ? 'md:justify-end' : ''} items-center gap-12`}>
-
-                        {/* Gradient Border Wrapper */}
-                        <div className={`relative w-full md:w-5/12 aspect-[3/4] p-[1px] rounded-2xl overflow-hidden bg-gradient-to-b from-white/20 to-transparent ${node.align === 'right' ? 'order-last' : 'order-first'}`}>
-                            <div className="relative w-full h-full rounded-2xl overflow-hidden bg-void">
-                                <ParallaxImage
-                                    src={node.src}
-                                    alt={node.title}
-                                    aspectRatio="3/4"
-                                    className="will-change-transform transform-gpu"
-                                />
-
-                                {/* Floating Data Overlay */}
-                                <motion.div
-                                    initial={{ opacity: 0, x: node.align === 'right' ? 20 : -20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.5, duration: 1 }}
-                                    className={`absolute -bottom-8 ${node.align === 'right' ? '-left-12' : '-right-12'} bg-obsidian/80 backdrop-blur-md border border-white/10 p-4 z-30`}
-                                >
-                                    <span className="font-mono text-[10px] text-gold tracking-[0.2em] block mb-1">NODE_{node.id}</span>
-                                    <h3 className="font-serif text-2xl text-white">{node.title}</h3>
-                                    <div className="h-[1px] w-full bg-gold/30 my-2" />
-                                    <span className="font-mono text-[9px] text-white/40">{node.coord}</span>
-                                </motion.div>
-                            </div>
-                        </div>
-
-                    </div>
+                    <NodeCard key={node.id} node={node} index={i} />
                 ))}
             </div>
         </section>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Hexagon } from "lucide-react";
 
 const links = [
     { href: "/", label: "HOME" },
@@ -13,24 +13,24 @@ const links = [
     { href: "/academy", label: "ACADEMY" },
     { href: "/foundry", label: "FOUNDRY" },
     { href: "/about", label: "ABOUT" },
+    { href: "/auth", label: "ENTER HUB" },
 ];
 
 export default function Navbar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
     const { scrollY } = useScroll();
-    const navBackground = useTransform(scrollY, [0, 80], ["rgba(5,5,5,0)", "rgba(5,5,5,0.9)"]);
+    const navBg = useTransform(scrollY, [0, 80], ["rgba(5,5,5,0)", "rgba(5,5,5,0.92)"]);
     const navBorder = useTransform(scrollY, [0, 80], ["rgba(255,255,255,0)", "rgba(255,255,255,0.06)"]);
 
     return (
         <motion.nav
-            style={{ backgroundColor: navBackground, borderBottomColor: navBorder }}
-            className="fixed top-0 left-0 right-0 z-[50] h-20 px-6 flex items-center justify-between border-b border-white/5 backdrop-blur-xl transition-all duration-500 bg-[#050505]/80"
+            style={{ backgroundColor: navBg, borderBottomColor: navBorder }}
+            className="fixed top-0 left-0 right-0 z-[50] h-20 px-6 md:px-10 border-b backdrop-blur-xl"
         >
-            {/* Logo Area */}
-            <div className="flex items-center gap-4">
+            <div className="h-full flex items-center justify-between max-w-[1400px] mx-auto">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-3">
+                <Link href="/" className="flex items-center gap-3 shrink-0">
                     <svg viewBox="0 0 40 40" className="w-6 h-6">
                         <defs>
                             <linearGradient id="nG" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -46,26 +46,33 @@ export default function Navbar() {
                     </span>
                 </Link>
 
-                {/* Desktop Workstation Nav — top right, minimal */}
+                {/* Desktop Links */}
                 <div className="hidden md:flex items-center gap-8">
-                    {links.map((l) => (
-                        <Link
-                            key={l.href}
-                            href={l.href}
-                            className={`relative font-mono text-[9px] tracking-[0.25em] transition-all duration-500 group ${pathname === l.href ? "text-gold" : "text-white/40 hover:text-white"
-                                }`}
-                        >
-                            {/* Active Dot */}
-                            {pathname === l.href && (
-                                <motion.span
-                                    layoutId="navDot"
-                                    className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-gold shadow-[0_0_8px_rgba(212,175,55,0.8)]"
-                                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                                />
-                            )}
-                            {l.label}
-                        </Link>
-                    ))}
+                    {links.map((l) => {
+                        const isActive = pathname === l.href;
+                        const isEnter = l.href === "/auth";
+                        return (
+                            <Link
+                                key={l.href}
+                                href={l.href}
+                                className={`relative font-mono text-[9px] tracking-[0.25em] transition-all duration-500 group ${isEnter
+                                        ? "text-gold border border-gold/30 px-4 py-1.5 rounded hover:bg-gold hover:text-black"
+                                        : isActive
+                                            ? "text-gold"
+                                            : "text-white/40 hover:text-white"
+                                    }`}
+                            >
+                                {isActive && !isEnter && (
+                                    <motion.span
+                                        layoutId="navDot"
+                                        className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-gold shadow-[0_0_8px_rgba(212,175,55,0.8)]"
+                                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                    />
+                                )}
+                                {l.label}
+                            </Link>
+                        );
+                    })}
                 </div>
 
                 {/* Mobile Trigger */}
@@ -74,7 +81,7 @@ export default function Navbar() {
                 </button>
             </div>
 
-            {/* Mobile menu */}
+            {/* Mobile Menu */}
             {open && (
                 <motion.div
                     initial={{ opacity: 0, height: 0 }}

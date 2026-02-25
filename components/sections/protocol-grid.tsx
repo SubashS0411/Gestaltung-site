@@ -34,7 +34,11 @@ const specs = [
 export default function ProtocolGrid() {
     const [copied, setCopied] = useState(false);
 
-    const copyProtocol = () => {
+    const copyProtocol = async () => {
+        const specText = specs.map(s => `${s.title}: ${s.value}\n${s.desc}`).join("\n\n");
+        try {
+            await navigator.clipboard.writeText(`GESTALTUNG PROTOCOL SPECIFICATIONS\n${"═".repeat(40)}\n\n${specText}`);
+        } catch { /* fallback: silent */ }
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };

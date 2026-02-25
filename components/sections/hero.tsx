@@ -4,7 +4,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import MagneticButton from "../ui/magnetic-button";
 import ParallaxText from "../ui/parallax-text";
-import { ArrowDown } from "lucide-react";
+import { ArrowRight, ArrowDown } from "lucide-react";
 
 /* ─── Breathing Hexagon Logo ─── */
 function HexLogo() {
@@ -133,11 +133,17 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="mt-4"
+                    className="mt-4 flex gap-4"
                 >
-                    <MagneticButton>
+                    <MagneticButton href="/auth">
+                        <ArrowRight className="w-3.5 h-3.5" />
+                        Initialize Link
+                    </MagneticButton>
+                    <MagneticButton onClick={() => {
+                        window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+                    }}>
                         <ArrowDown className="w-3.5 h-3.5" />
-                        Initialize Entry
+                        Explore
                     </MagneticButton>
                 </motion.div>
             </motion.div>

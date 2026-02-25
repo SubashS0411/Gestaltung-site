@@ -9,12 +9,17 @@
     box-sizing: border-box;
   }
 
+  html {
+    position: relative;
+  }
+
   body {
     background: #050505;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    position: relative;
   }
 
   ::selection {
@@ -22,54 +27,56 @@
     color: #F3E5AB;
   }
 
-  /* Better base font sizes & contrast */
   p,
   span,
   label {
     line-height: 1.7;
-    color: rgba(232, 232, 232, 0.85);
-    /* Increased contrast from default */
   }
 
-  /* Boost visibility of muted text globally */
-  .text-white\/40,
-  .text-white\/30,
-  .text-white\/20 {
-    color: rgba(255, 255, 255, 0.65) !important;
-  }
-
-  .text-white\/50 {
-    color: rgba(255, 255, 255, 0.75) !important;
+  /* Headings readable by default */
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.1;
+    letter-spacing: 0.02em;
   }
 }
 
 @layer components {
 
-  /* ── Glassmorphism (High Gloss) ── */
+  /* ── Glassmorphism Card ── */
   .glass-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow:
-      0 4px 24px -1px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .glass-card:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
-    border-color: rgba(212, 175, 55, 0.4);
-    /* Gold border on hover */
-    box-shadow:
-      0 8px 32px -4px rgba(0, 0, 0, 0.5),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      0 0 15px rgba(212, 175, 55, 0.1);
-    /* Subtle gold glow */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%);
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 20px rgba(212, 175, 55, 0.08);
     transform: translateY(-2px);
   }
 
-  /* ── Premium Utilities ── */
+  /* ── Gold Gradient Text ── */
+  .text-gradient-gold,
+  .text-gold-gradient {
+    background: linear-gradient(135deg, #AA8C2C 0%, #D4AF37 40%, #F3E5AB 60%, #AA8C2C 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shine 6s linear infinite;
+  }
+
+  /* ── Gold Shimmer Text ── */
   .text-gold-shine {
     background: linear-gradient(110deg, #aa8c2c 8%, #f3e5ab 18%, #aa8c2c 33%);
     background-size: 200% 100%;
@@ -88,11 +95,11 @@
   .tag-pill {
     padding: 5px 14px;
     border-radius: 999px;
-    font-size: 10px;
+    font-size: 11px;
     font-family: var(--font-jetbrains), monospace;
     letter-spacing: 0.12em;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: rgba(180, 170, 140, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(200, 190, 160, 1);
     transition: all 0.4s ease;
   }
 
@@ -101,59 +108,31 @@
     color: #D4AF37;
     background: rgba(212, 175, 55, 0.05);
   }
-
-  /* ── Full-bleed parallax image section ── */
-  .parallax-section {
-    position: relative;
-    width: 100%;
-    min-height: 70vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  .parallax-section .parallax-bg {
-    position: absolute;
-    inset: -20%;
-    background-size: cover;
-    background-position: center;
-    will-change: transform;
-  }
-
-  .parallax-section .parallax-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, #050505 0%, rgba(5, 5, 5, 0.3) 40%, rgba(5, 5, 5, 0.3) 60%, #050505 100%);
-  }
 }
 
-/* ── Noise Texture (Fixed & Heavy) ── */
+/* ── Noise Texture ── */
 .noise-overlay {
   position: fixed;
   inset: 0;
   z-index: 9998;
-  /* High z-index but below cursor/modal if any */
   pointer-events: none;
-  opacity: 0.05;
-  /* 5% Opacity as requested */
+  opacity: 0.04;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ── Vignette (Cinema Focus) ── */
+/* ── Vignette ── */
 .vignette {
   position: fixed;
   inset: 0;
   z-index: 9997;
   pointer-events: none;
-  background: radial-gradient(circle at center, transparent 40%, rgba(5, 5, 5, 0.8) 100%);
+  background: radial-gradient(ellipse 75% 60% at 50% 50%, transparent 0%, rgba(5, 5, 5, 0.3) 65%, rgba(5, 5, 5, 0.7) 100%);
 }
 
-/* ── Scrollbar (Gold lux) ── */
+/* ── Scrollbar ── */
 ::-webkit-scrollbar {
-  width: 2px;
-  /* Ultra-thin */
+  width: 3px;
 }
 
 ::-webkit-scrollbar-track {
@@ -167,14 +146,4 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #F3E5AB;
-}
-
-/* ── Gold gradient text ── */
-.text-gold-gradient {
-  background: linear-gradient(135deg, #AA8C2C 0%, #D4AF37 40%, #F3E5AB 60%, #AA8C2C 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shine 6s linear infinite;
 }

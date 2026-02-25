@@ -3,8 +3,7 @@ import { Playfair_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/layout/smooth-scroll";
 import CinematicNoise from "@/components/ui/cinematic-noise";
-import Navbar from "@/components/layout/navbar";
-import ClientLayout from "@/components/layout/client-layout";
+import ScrollProgress from "@/components/ui/scroll-progress";
 
 const playfair = Playfair_Display({
     subsets: ["latin"],
@@ -21,19 +20,18 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
     title: "GESTALTUNG — The Black Edition Protocol",
     description: "A cinematic luxury interface protocol. Dark. Atmospheric. Engineered.",
+    icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en" className={`${playfair.variable} ${jetbrains.variable}`}>
-            <body>
-                <ClientLayout>
-                    <SmoothScroll>
-                        <Navbar />
-                        <CinematicNoise />
-                        {children}
-                    </SmoothScroll>
-                </ClientLayout>
+            <body className="relative">
+                <SmoothScroll>
+                    <ScrollProgress />
+                    <CinematicNoise />
+                    {children}
+                </SmoothScroll>
             </body>
         </html>
     );
