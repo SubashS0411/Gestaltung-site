@@ -1,0 +1,65 @@
+﻿
+> gestaltung---figma-to-framer-ai-porter@0.0.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+node.exe : ΓÜá The 
+"middleware" file 
+convention is 
+deprecated. Please use 
+"proxy" instead. Learn 
+more: https://nextjs.org
+/docs/messages/middlewar
+e-to-proxy
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo      
+        : NotSpecified  
+  : (ΓÜá The "middle.   
+ ..leware-to-proxy:S    
+tring) [], RemoteEx    
+ception
+    + FullyQualifiedErr 
+   orId : NativeComman  
+  dError
+ 
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 10.8s
+  Running TypeScript ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/14) ...
+  Generating static pages using 11 workers (3/14) 
+  Generating static pages using 11 workers (6/14) 
+  Generating static pages using 11 workers (10/14) 
+Γ£ô Generating static pages using 11 workers (14/14) in 1437.5ms
+  Finalizing page optimization ...
+
+Route (app)
+Γöî Γùï /
+Γö£ Γùï /_not-found
+Γö£ Γùï /about
+Γö£ Γùï /academy
+Γö£ ╞Æ /api/transfers
+Γö£ Γùï /auth
+Γö£ Γùï /dashboard
+Γö£ Γùï /dashboard/academy
+Γö£ Γùï /dashboard/registry
+Γö£ Γùï /dashboard/settings
+Γö£ Γùï /foundry
+Γö£ Γùï /node-hub
+Γöö Γùï /registry
+
+
+╞Æ Proxy (Middleware)
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+

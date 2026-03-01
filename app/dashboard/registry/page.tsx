@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { REGISTRY_ITEMS } from "@/lib/data";
 import { useAppStore } from "@/lib/store";
@@ -40,17 +41,24 @@ export default function DashboardRegistryPage() {
                         <div className="p-[1px] rounded-xl bg-gradient-to-b from-white/10 to-transparent hover:from-gold/25 hover:to-transparent transition-all duration-500">
                             <div className="bg-[#050505] rounded-xl overflow-hidden hover:bg-[#070707] transition-colors duration-300">
                                 {/* Preview */}
-                                <div className="h-40 relative overflow-hidden" style={{ background: item.previewBg }}>
-                                    <div className="absolute inset-0 flex items-center justify-center opacity-40">
-                                        <Package className="w-12 h-12 text-white/10 stroke-[0.5]" />
+                                <div className="h-40 relative overflow-hidden group/image border-b border-white/[0.04]">
+                                    <div className="absolute inset-0 bg-black/40 z-10 transition-opacity duration-700 group-hover/image:opacity-0" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
+                                    <Image
+                                        src={item.imageUrl}
+                                        alt={item.name}
+                                        fill
+                                        className="object-cover transition-transform duration-1000 group-hover/image:scale-110 opacity-60 group-hover/image:opacity-100 filter contrast-125 saturate-50"
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-40 z-20 pointer-events-none">
+                                        <Package className="w-8 h-8 text-gold drop-shadow-md stroke-[1]" />
                                     </div>
                                     {item.isNew && (
                                         <span className="absolute top-3 right-3 font-mono text-[7px] text-black bg-gold px-2 py-0.5 rounded tracking-wider">NEW</span>
                                     )}
-                                    <span className={`absolute top-3 left-3 font-mono text-[7px] tracking-wider px-2 py-0.5 rounded ${item.price === "FREE" ? "text-emerald-400 bg-emerald-400/10 border border-emerald-400/20" :
-                                            item.price === "PRO" ? "text-gold bg-gold/10 border border-gold/20" :
-                                                "text-purple-400 bg-purple-400/10 border border-purple-400/20"
-                                        }`}>{item.price}</span>
+                                    <span className={`absolute top-3 left-3 font-mono text-[7px] tracking-wider px-2 py-0.5 rounded ${item.tier === "FREE" ? "text-emerald-400 bg-emerald-400/10 border border-emerald-400/20" :
+                                        "text-gold bg-gold/10 border border-gold/20"
+                                        }`}>{item.tier}</span>
                                 </div>
 
                                 {/* Info */}
@@ -110,10 +118,9 @@ export default function DashboardRegistryPage() {
                             {/* Header */}
                             <div className="p-8 border-b border-white/[0.06]">
                                 <div className="flex items-center gap-3 mb-4">
-                                    <span className={`font-mono text-[8px] tracking-wider px-2 py-0.5 rounded ${selected.price === "FREE" ? "text-emerald-400 bg-emerald-400/10 border border-emerald-400/20" :
-                                            selected.price === "PRO" ? "text-gold bg-gold/10 border border-gold/20" :
-                                                "text-purple-400 bg-purple-400/10 border border-purple-400/20"
-                                        }`}>{selected.price}</span>
+                                    <span className={`font-mono text-[8px] tracking-wider px-2 py-0.5 rounded ${selected.tier === "FREE" ? "text-emerald-400 bg-emerald-400/10 border border-emerald-400/20" :
+                                        "text-gold bg-gold/10 border border-gold/20"
+                                        }`}>{selected.tier}</span>
                                     <span className="font-mono text-[8px] text-white/70 tracking-wider">{selected.category}</span>
                                     {selected.isNew && <span className="font-mono text-[7px] text-black bg-gold px-2 py-0.5 rounded tracking-wider">NEW</span>}
                                 </div>
@@ -151,8 +158,8 @@ export default function DashboardRegistryPage() {
                                 <button
                                     onClick={() => toggleSaved(selected.id)}
                                     className={`flex items-center gap-2 px-6 py-3 rounded-lg border transition-all duration-300 ${savedItems.includes(selected.id)
-                                            ? "border-gold/30 bg-gold/10 text-gold"
-                                            : "border-white/10 text-white/80 hover:border-gold/20 hover:text-gold"
+                                        ? "border-gold/30 bg-gold/10 text-gold"
+                                        : "border-white/10 text-white/80 hover:border-gold/20 hover:text-gold"
                                         }`}
                                 >
                                     <Star className={`w-3.5 h-3.5 ${savedItems.includes(selected.id) ? "fill-gold" : ""}`} />

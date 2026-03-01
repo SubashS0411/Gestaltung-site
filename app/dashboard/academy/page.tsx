@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { ACADEMY_COURSES } from "@/lib/data";
 import { BookOpen, Clock, Play, ArrowUpRight } from "lucide-react";
 
@@ -24,17 +25,24 @@ export default function DashboardAcademyPage() {
                     >
                         <div className="bg-[#050505] rounded-xl p-6 hover:bg-[#070707] transition-colors flex flex-col md:flex-row gap-6">
                             {/* Thumbnail */}
-                            <div className="w-full md:w-48 h-32 rounded-lg bg-gradient-to-br from-gold/[0.05] to-transparent border border-white/[0.04] flex items-center justify-center shrink-0">
-                                <Play className="w-8 h-8 text-gold/20 group-hover:text-gold/40 transition-colors" />
+                            <div className="w-full md:w-48 h-32 rounded-lg relative overflow-hidden flex items-center justify-center shrink-0 border border-white/[0.04]">
+                                <div className="absolute inset-0 bg-black/40 z-10 transition-opacity duration-700 group-hover:opacity-0" />
+                                <Image
+                                    src={course.image}
+                                    alt={course.title}
+                                    fill
+                                    className="object-cover opacity-60 group-hover:opacity-100 transition-all duration-700 filter contrast-125 saturate-50 group-hover:scale-105"
+                                />
+                                <Play className="w-8 h-8 text-gold shadow-lg z-20 drop-shadow-md stroke-[1] relative" />
                             </div>
 
                             {/* Content */}
                             <div className="flex-1 flex flex-col justify-between">
                                 <div>
                                     <div className="flex items-center gap-3 mb-2">
-                                        <span className={`font-mono text-[7px] tracking-[0.2em] px-2 py-0.5 rounded border ${course.difficulty === "ADVANCED" ? "text-gold/80 border-gold/20" :
-                                                course.difficulty === "INTERMEDIATE" ? "text-blue-400/80 border-blue-400/20" :
-                                                    "text-emerald-400/80 border-emerald-400/20"
+                                        <span className={`font-mono text-[7px] tracking-[0.2em] px-2 py-0.5 rounded border ${course.difficulty === "ARCHITECT" ? "text-gold/80 border-gold/20" :
+                                            course.difficulty === "ENGINEER" ? "text-blue-400/80 border-blue-400/20" :
+                                                "text-emerald-400/80 border-emerald-400/20"
                                             }`}>{course.difficulty}</span>
                                     </div>
                                     <h3 className="font-serif text-lg text-white/90 group-hover:text-gold transition-colors duration-500 mb-2">{course.title}</h3>

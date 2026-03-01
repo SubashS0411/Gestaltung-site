@@ -1,313 +1,311 @@
 ﻿"use client";
 
-import { useRef, useMemo, Suspense } from "react";
+import { useRef, useMemo, Suspense, useState } from "react";
+import Image from "next/image";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, MeshTransmissionMaterial, Environment, Stars } from "@react-three/drei";
-import { EffectComposer, DepthOfField, Noise, Vignette } from "@react-three/postprocessing";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { MANIFESTO_LINES, ABOUT_TIMELINE, ABOUT_PRINCIPLES } from "@/lib/data";
-import { Hexagon, Target, Eye, Shield } from "lucide-react";
+import { Text } from "@react-three/drei";
+import { EffectComposer, Noise, Vignette, Bloom } from "@react-three/postprocessing";
+import { motion, useScroll, useSpring, useTransform, useInView, useMotionValue } from "framer-motion";
+import { ABOUT_PRINCIPLES, ABOUT_TIMELINE, MANIFESTO_LINES } from "@/lib/data";
 import * as THREE from "three";
 
-const iconMap: Record<string, React.ReactNode> = {
-    hexagon: <Hexagon className="w-6 h-6 stroke-[0.5]" />,
-    target: <Target className="w-6 h-6 stroke-[0.5]" />,
-    eye: <Eye className="w-6 h-6 stroke-[0.5]" />,
-    shield: <Shield className="w-6 h-6 stroke-[0.5]" />,
-};
+/* ═══ Volumetric Mouse Flashlight ═══ */
+function Flashlight() {
+    const lightRef = useRef<THREE.SpotLight>(null);
+    const targetRef = useRef<THREE.Object3D>(null);
+    const { viewport } = useThree();
 
-/* ═══ 3D Rotating Gold Hexagon ═══ */
-function GoldHexagon() {
-    const meshRef = useRef<THREE.Mesh>(null);
-    const edgesRef = useRef<THREE.LineSegments>(null);
-
-    useFrame(({ clock }) => {
-        if (meshRef.current) {
-            meshRef.current.rotation.y = clock.getElapsedTime() * 0.15;
-            meshRef.current.rotation.x = Math.sin(clock.getElapsedTime() * 0.1) * 0.2;
-        }
-        if (edgesRef.current) {
-            edgesRef.current.rotation.y = clock.getElapsedTime() * 0.15;
-            edgesRef.current.rotation.x = Math.sin(clock.getElapsedTime() * 0.1) * 0.2;
-        }
+    useFrame(({ pointer }) => {
+        if (!lightRef.current || !targetRef.current) return;
+        const x = (pointer.x * viewport.width) / 2;
+        const y = (pointer.y * viewport.height) / 2;
+        targetRef.current.position.set(x, y, 0);
+        lightRef.current.position.set(x, y, 8);
     });
 
-    const hexShape = useMemo(() => {
-        const shape = new THREE.Shape();
-        const sides = 6;
-        const radius = 2;
-        for (let i = 0; i <= sides; i++) {
-            const angle = (i / sides) * Math.PI * 2 - Math.PI / 2;
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius;
-            if (i === 0) shape.moveTo(x, y);
-            else shape.lineTo(x, y);
-        }
-        return shape;
-    }, []);
-
-    const geometry = useMemo(() => {
-        return new THREE.ExtrudeGeometry(hexShape, { depth: 0.3, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 3 });
-    }, [hexShape]);
-
-    const edgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
-
     return (
-        <Float speed={0.8} rotationIntensity={0.3} floatIntensity={0.4}>
-            <group position={[0, 0, -2]}>
-                <mesh ref={meshRef} geometry={geometry}>
-                    <meshStandardMaterial color="#D4AF37" metalness={0.9} roughness={0.15} transparent opacity={0.08} />
-                </mesh>
-                <lineSegments ref={edgesRef} geometry={edgesGeometry}>
-                    <lineBasicMaterial color="#D4AF37" transparent opacity={0.25} />
-                </lineSegments>
-            </group>
-        </Float>
+        <>
+            <spotLight ref={lightRef} color="#D4AF37" intensity={15} distance={20} angle={0.4} penumbra={1} decay={2} castShadow />
+            <object3D ref={targetRef} />
+            {lightRef.current && targetRef.current && (
+                <primitive object={lightRef.current.target} position={targetRef.current.position} />
+            )}
+        </>
     );
 }
 
-/* ═══ Gold Particle Field ═══ */
-function GoldParticles({ count = 200 }: { count?: number }) {
-    const meshRef = useRef<THREE.InstancedMesh>(null);
-    const dummy = useMemo(() => new THREE.Object3D(), []);
-
-    const particles = useMemo(() => {
-        return Array.from({ length: count }, () => ({
-            position: [
-                (Math.random() - 0.5) * 20,
-                (Math.random() - 0.5) * 15,
-                (Math.random() - 0.5) * 10 - 5,
-            ] as [number, number, number],
-            speed: 0.005 + Math.random() * 0.02,
-            offset: Math.random() * Math.PI * 2,
-        }));
-    }, [count]);
+/* ═══ Wireframe Terrain (Data Topography) ═══ */
+function WireframeTerrain({ scrollYProgress }: { scrollYProgress: any }) {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const smoothScroll = useSpring(scrollYProgress, { stiffness: 50, damping: 30 });
 
     useFrame(({ clock }) => {
         if (!meshRef.current) return;
-        particles.forEach((p, i) => {
-            dummy.position.set(
-                p.position[0] + Math.sin(clock.getElapsedTime() * p.speed + p.offset) * 0.5,
-                p.position[1] + Math.cos(clock.getElapsedTime() * p.speed * 0.7 + p.offset) * 0.3,
-                p.position[2]
-            );
-            dummy.scale.setScalar(0.01 + Math.sin(clock.getElapsedTime() * 0.5 + p.offset) * 0.005);
-            dummy.updateMatrix();
-            meshRef.current!.setMatrixAt(i, dummy.matrix);
-        });
-        meshRef.current.instanceMatrix.needsUpdate = true;
+        const geometry = meshRef.current.geometry as THREE.PlaneGeometry;
+        const positions = geometry.attributes.position;
+        const time = clock.elapsedTime;
+
+        for (let i = 0; i < positions.count; i++) {
+            const x = positions.getX(i);
+            const y = positions.getY(i);
+            const z = Math.sin(x * 0.5 + time * 0.3) * Math.cos(y * 0.5 + time * 0.2) * 0.5 + Math.sin(x * 1.5 + time * 0.1) * 0.2;
+            positions.setZ(i, z);
+        }
+        positions.needsUpdate = true;
+
+        // Slow morph based on scroll
+        meshRef.current.rotation.x = -0.6 + smoothScroll.get() * 0.2;
     });
 
     return (
-        <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-            <sphereGeometry args={[1, 6, 6]} />
-            <meshBasicMaterial color="#D4AF37" transparent opacity={0.6} />
-        </instancedMesh>
+        <mesh ref={meshRef} position={[0, -8, -4]} rotation={[-0.6, 0, 0]}>
+            <planeGeometry args={[30, 30, 40, 40]} />
+            <meshBasicMaterial color="#D4AF37" wireframe transparent opacity={0.06} />
+        </mesh>
     );
 }
 
-/* ═══ 3D Scene ═══ */
-function AboutScene() {
+/* ═══ Lore Monument Wall ═══ */
+function LoreMonumentWall({ scrollYProgress }: { scrollYProgress: any }) {
+    const groupRef = useRef<THREE.Group>(null);
+    const smoothY = useSpring(scrollYProgress, { stiffness: 100, damping: 40 });
+    const yPosition = useTransform(smoothY, [0, 1], [0, 45]);
+
+    useFrame(() => {
+        if (groupRef.current) groupRef.current.position.y = yPosition.get();
+    });
+
+    return (
+        <group ref={groupRef}>
+            <mesh position={[0, -20, -1]}>
+                <planeGeometry args={[100, 100]} />
+                <meshStandardMaterial color="#020202" roughness={0.9} metalness={0.1} />
+            </mesh>
+
+            <Text position={[0, 2, 0]} fontSize={1.2} color="#D4AF37" material-toneMapped={false}>
+                <meshStandardMaterial metalness={1} roughness={0.2} color="#D4AF37" />
+                MANIFESTO
+            </Text>
+
+            <Text position={[0, 0, 0]} fontSize={0.3} maxWidth={6} textAlign="center" lineHeight={1.5} color="#D4AF37">
+                <meshStandardMaterial metalness={0.8} roughness={0.4} color="#D4AF37" />
+                {"THE BLACK EDITION PROTOCOL IS A FRAMEWORK FOR THE ELITE.\nAN ARCHITECTURE OF SHADOWS, GOLD, AND UNAPOLOGETIC PERFORMANCE."}
+            </Text>
+
+            {ABOUT_PRINCIPLES.map((principle, i) => (
+                <group key={principle.id} position={[0, -5 - i * 4, 0]}>
+                    <Text position={[0, 0.8, 0]} fontSize={0.2} color="#F3E5AB" letterSpacing={0.2}>
+                        <meshStandardMaterial metalness={0.9} roughness={0.3} color="#F3E5AB" />
+                        {`0${i + 1} — ${principle.title}`}
+                    </Text>
+                    <Text position={[0, 0, 0]} fontSize={0.25} maxWidth={5} textAlign="center" lineHeight={1.6} color="#ffffff">
+                        <meshStandardMaterial metalness={0.5} roughness={0.6} color="#ffffff" />
+                        {principle.description}
+                    </Text>
+                </group>
+            ))}
+
+            <Text position={[0, -23, 0]} fontSize={0.8} color="#D4AF37">
+                <meshStandardMaterial metalness={1} roughness={0.2} color="#D4AF37" />
+                EPOCHS
+            </Text>
+
+            {ABOUT_TIMELINE.map((item, i) => (
+                <group key={item.epoch} position={[0, -26 - i * 4, 0]}>
+                    <Text position={[-3, 0, 0]} fontSize={0.4} color="#D4AF37" anchorX="right">
+                        <meshStandardMaterial metalness={0.9} roughness={0.2} color="#D4AF37" />
+                        {item.epoch}
+                    </Text>
+                    <Text position={[-2.5, 0.2, 0]} fontSize={0.25} color="#ffffff" anchorX="left">
+                        <meshStandardMaterial metalness={0.7} roughness={0.4} color="#ffffff" />
+                        {item.phase}
+                    </Text>
+                    <Text position={[-2.5, -0.3, 0]} fontSize={0.18} maxWidth={5} lineHeight={1.5} color="#aaaaaa" anchorX="left">
+                        <meshStandardMaterial metalness={0.5} roughness={0.6} color="#aaaaaa" />
+                        {item.event}
+                    </Text>
+                </group>
+            ))}
+
+            <Text position={[0, -42, 0]} fontSize={0.6} color="#D4AF37" letterSpacing={0.1}>
+                <meshStandardMaterial metalness={1} roughness={0.2} color="#D4AF37" />
+                WELCOME TO THE VOID.
+            </Text>
+        </group>
+    );
+}
+
+function LoreScene({ scrollYProgress }: { scrollYProgress: any }) {
     return (
         <>
-            <ambientLight intensity={0.3} />
-            <pointLight position={[5, 5, 5]} intensity={0.5} color="#D4AF37" />
-            <pointLight position={[-5, -5, 3]} intensity={0.3} color="#F3E5AB" />
-            <GoldHexagon />
-            <GoldParticles count={150} />
-            <Stars radius={50} depth={30} count={800} factor={2} saturation={0} fade speed={0.3} />
+            <Flashlight />
+            <LoreMonumentWall scrollYProgress={scrollYProgress} />
+            <WireframeTerrain scrollYProgress={scrollYProgress} />
             <EffectComposer>
-                <DepthOfField focusDistance={0.02} focalLength={0.06} bokehScale={3} />
-                <Noise opacity={0.03} />
-                <Vignette eskil={false} offset={0.1} darkness={0.8} />
+                <Bloom luminanceThreshold={0.4} intensity={1} levels={4} mipmapBlur />
+                <Noise opacity={0.06} />
+                <Vignette eskil={false} offset={0.1} darkness={0.95} />
             </EffectComposer>
         </>
+    );
+}
+
+/* ═══ Word-by-Word Scroll Reveal ═══ */
+function ManifestoReveal() {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ["start start", "end end"],
+    });
+
+    return (
+        <section ref={sectionRef} className="relative min-h-[200vh] bg-[#050505] py-40">
+            <div className="sticky top-0 h-screen flex items-center justify-center">
+                <div className="max-w-4xl mx-auto px-8">
+                    {MANIFESTO_LINES.map((line, lineIndex) => (
+                        <ManifestoLine
+                            key={lineIndex}
+                            line={line}
+                            lineIndex={lineIndex}
+                            totalLines={MANIFESTO_LINES.length}
+                            scrollYProgress={scrollYProgress}
+                        />
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function ManifestoLine({
+    line,
+    lineIndex,
+    totalLines,
+    scrollYProgress,
+}: {
+    line: { type: "heading" | "body"; text: string };
+    lineIndex: number;
+    totalLines: number;
+    scrollYProgress: any;
+}) {
+    const startProgress = lineIndex / totalLines;
+    const endProgress = (lineIndex + 0.8) / totalLines;
+
+    const opacity = useTransform(scrollYProgress, [startProgress, startProgress + 0.05, endProgress, endProgress + 0.05], [0, 1, 1, 0.3]);
+    const y = useTransform(scrollYProgress, [startProgress, startProgress + 0.05], [30, 0]);
+
+    return (
+        <motion.div
+            style={{ opacity, y }}
+            className={`mb-6 transform-gpu ${line.type === "heading"
+                ? "font-serif text-2xl md:text-4xl text-gold tracking-tight leading-tight"
+                : "font-mono text-xs md:text-sm text-white/60 leading-relaxed tracking-wider max-w-3xl"
+                }`}
+        >
+            {line.text}
+        </motion.div>
+    );
+}
+
+/* ═══ Magnetic CTA Button ═══ */
+function MagneticCTA() {
+    const ref = useRef<HTMLDivElement>(null);
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+    const sx = useSpring(x, { damping: 15, stiffness: 200 });
+    const sy = useSpring(y, { damping: 15, stiffness: 200 });
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <section className="relative py-40 bg-[#050505] flex items-center justify-center">
+            {/* Noise grain intensification overlay */}
+            <motion.div
+                animate={{ opacity: isHovered ? 0.15 : 0.04 }}
+                transition={{ duration: 0.3 }}
+                className="fixed inset-0 z-[9998] pointer-events-none mix-blend-overlay"
+                style={{
+                    backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+                }}
+            />
+
+            <motion.div
+                ref={ref}
+                style={{ x: sx, y: sy }}
+                onMouseMove={(e) => {
+                    const rect = ref.current?.getBoundingClientRect();
+                    if (!rect) return;
+                    x.set((e.clientX - rect.left - rect.width / 2) * 0.15);
+                    y.set((e.clientY - rect.top - rect.height / 2) * 0.15);
+                }}
+                onMouseLeave={() => { x.set(0); y.set(0); setIsHovered(false); }}
+                onHoverStart={() => setIsHovered(true)}
+                onHoverEnd={() => setIsHovered(false)}
+                whileTap={{ scale: 0.97 }}
+                className="transform-gpu"
+            >
+                <div className={`px-16 py-8 border-2 rounded-lg cursor-pointer transition-all duration-500 ${isHovered
+                    ? "border-gold bg-gold/10 shadow-[0_0_60px_rgba(212,175,55,0.3)]"
+                    : "border-white/10 bg-transparent shadow-none"
+                    }`}>
+                    <span className="font-mono text-sm md:text-base tracking-[0.4em] text-gold">
+                        INITIALIZE PROTOCOL
+                    </span>
+                </div>
+            </motion.div>
+        </section>
     );
 }
 
 /* ═══ Main Page ═══ */
 export default function AboutPage() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
 
     return (
-        <div ref={containerRef} className="relative min-h-screen bg-[#050505]">
-            {/* Fixed 3D Canvas Background */}
-            <div className="fixed inset-0 z-0">
-                <Canvas
-                    camera={{ position: [0, 0, 6], fov: 50 }}
-                    gl={{ antialias: true, alpha: true }}
-                    dpr={[1, 1.5]}
-                >
-                    <Suspense fallback={null}>
-                        <AboutScene />
-                    </Suspense>
-                </Canvas>
-            </div>
-
-            {/* Film grain overlay */}
-            <div className="fixed inset-0 z-[2] pointer-events-none mix-blend-overlay opacity-[0.04]"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-                }}
-            />
-
-            {/* Content overlay */}
-            <div className="relative z-[3]">
-                {/* Hero */}
-                <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1.2, delay: 0.3 }}
-                    >
-                        <p className="font-mono text-[10px] text-gold tracking-[0.5em] mb-8">05 — THE MANIFESTO</p>
-                        <h1 className="font-serif text-6xl sm:text-8xl md:text-9xl lg:text-[11rem] text-gradient-gold tracking-[0.08em] leading-[0.85]">
-                            GESTALTUNG
-                        </h1>
-                        <p className="font-mono text-xs text-white/80 tracking-[0.3em] mt-6">CODE AS LUXURY MATERIAL</p>
-                    </motion.div>
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 2 }}
-                        className="absolute bottom-12 flex flex-col items-center gap-2"
-                    >
-                        <span className="font-mono text-[8px] text-white/70 tracking-[0.4em]">SCROLL TO READ</span>
-                        <div className="h-8 w-[1px] relative overflow-hidden">
-                            <motion.div className="absolute top-0 w-full bg-gold/70" animate={{ height: ["0%", "100%"], opacity: [0.5, 0] }} transition={{ duration: 1.5, repeat: Infinity }} />
-                        </div>
-                    </motion.div>
-                </section>
-
-                {/* Manifesto Sections */}
-                <section className="max-w-4xl mx-auto px-6 py-20 space-y-0">
-                    {MANIFESTO_LINES.map((line, i) => (
-                        <ManifestoLine key={i} line={line} />
-                    ))}
-                </section>
-
-                {/* Divider */}
-                <div className="max-w-4xl mx-auto px-6 flex items-center gap-4 my-20">
-                    <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-gold/20" />
-                    <span className="w-2 h-2 rotate-45 border border-gold/30" />
-                    <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-gold/20" />
+        <div className="bg-[#000000]">
+            {/* ═══ Section 1: The Monolith (3D Flashlight) ═══ */}
+            <section ref={containerRef} className="relative h-[600vh] selection:bg-gold selection:text-black cursor-crosshair">
+                <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
+                    {/* Atmospheric image overlay */}
+                    <div className="absolute inset-0 z-0 opacity-20 filter contrast-150 saturate-50 mix-blend-screen pointer-events-none">
+                        <Image src="https://images.unsplash.com/photo-1604871000636-074fa5117945?q=80&w=2574&auto=format&fit=crop" alt="Atmosphere" fill className="object-cover" priority />
+                    </div>
+                    <Canvas className="relative z-10" camera={{ position: [0, 0, 6], fov: 45 }} gl={{ antialias: true, alpha: false }} dpr={[1, 1.5]}>
+                        <Suspense fallback={null}>
+                            <LoreScene scrollYProgress={scrollYProgress} />
+                        </Suspense>
+                    </Canvas>
                 </div>
 
-                {/* Principles */}
-                <section className="max-w-4xl mx-auto px-6 mb-32">
-                    <div className="flex items-center gap-4 mb-12">
-                        <span className="font-mono text-[9px] text-gold tracking-[0.5em]">CORE PROTOCOLS</span>
-                        <div className="flex-1 h-[1px] bg-gradient-to-r from-gold/20 to-transparent" />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {ABOUT_PRINCIPLES.map((p, i) => (
-                            <PrincipleCard key={p.title} principle={p} index={i} />
-                        ))}
-                    </div>
-                </section>
-
-                {/* Timeline */}
-                <section className="max-w-4xl mx-auto px-6 mb-32">
-                    <div className="flex items-center gap-4 mb-12">
-                        <span className="font-mono text-[9px] text-gold tracking-[0.5em]">PROTOCOL TIMELINE</span>
-                        <div className="flex-1 h-[1px] bg-gradient-to-r from-gold/20 to-transparent" />
-                    </div>
-                    {ABOUT_TIMELINE.map((item, i) => (
-                        <TimelineEntry key={item.year} item={item} index={i} />
-                    ))}
-                </section>
-
-                {/* Closing */}
-                <section className="max-w-4xl mx-auto px-6 text-center py-32">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <p className="font-mono text-[10px] text-gold/80 tracking-[0.5em] mb-6">ΓΕΣΤΑΛΤΥΝΓε</p>
-                        <h2 className="font-serif text-4xl md:text-6xl text-white tracking-tight mb-4">This is not a platform.</h2>
-                        <h2 className="font-serif text-4xl md:text-6xl text-gradient-gold tracking-tight">It is a protocol.</h2>
-                    </motion.div>
-                </section>
-            </div>
-        </div>
-    );
-}
-
-/* ═══ Sub-Components ═══ */
-function ManifestoLine({ line }: { line: { type: string; text: string } }) {
-    const ref = useRef<HTMLDivElement>(null);
-    const inView = useInView(ref, { once: true, margin: "-80px" });
-
-    if (line.type === "heading") {
-        return (
-            <div ref={ref} className="overflow-hidden py-8 md:py-14">
-                <motion.h2
-                    initial={{ y: "110%" }}
-                    animate={inView ? { y: "0%" } : {}}
-                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                    className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-white tracking-tight leading-[1] drop-shadow-[0_2px_20px_rgba(0,0,0,0.9)]"
+                {/* Hint overlay */}
+                <motion.div
+                    style={{ opacity: useTransform(scrollYProgress, [0, 0.05], [1, 0]) }}
+                    className="fixed inset-0 z-50 flex flex-col items-center justify-center pointer-events-none"
                 >
-                    {line.text}
-                </motion.h2>
-            </div>
-        );
-    }
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 1, duration: 1 }}
+                        className="flex flex-col items-center gap-4"
+                    >
+                        <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center relative">
+                            <div className="w-1 h-1 bg-gold rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                            <svg className="w-full h-full animate-[spin_8s_linear_infinite]" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(212,175,55,0.4)" strokeWidth="0.5" strokeDasharray="4 8" />
+                            </svg>
+                        </div>
+                        <p className="font-mono text-[9px] text-white/50 tracking-[0.4em] text-center leading-relaxed">
+                            PITCH BLACK VOID DETECTED.<br />
+                            DRAG CURSOR TO ILLUMINATE.<br />
+                            SCROLL TO SCAN LORE MONUMENT.
+                        </p>
+                    </motion.div>
+                </motion.div>
+            </section>
 
-    return (
-        <div ref={ref} className="py-4">
-            <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.15 }}
-                className="font-mono text-sm md:text-base text-white/90 leading-[1.9] tracking-wide max-w-3xl drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)]"
-            >
-                {line.text}
-            </motion.p>
+            {/* ═══ Section 2: Core Tenets (Word-by-Word Reveal) ═══ */}
+            <ManifestoReveal />
+
+            {/* ═══ Section 4: End-Point CTA ═══ */}
+            <MagneticCTA />
         </div>
-    );
-}
-
-function PrincipleCard({ principle, index }: { principle: typeof ABOUT_PRINCIPLES[0]; index: number }) {
-    const ref = useRef<HTMLDivElement>(null);
-    const inView = useInView(ref, { once: true });
-
-    return (
-        <motion.div
-            ref={ref}
-            initial={{ opacity: 0, y: 24 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
-            className="p-8 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/[0.06] hover:border-gold/25 transition-all duration-700 group"
-        >
-            <div className="text-gold/80 mb-6 group-hover:text-gold transition-colors">{iconMap[principle.icon]}</div>
-            <h3 className="font-mono text-sm text-gold tracking-[0.3em] mb-3">{principle.title}</h3>
-            <p className="font-mono text-xs text-white/80 leading-relaxed tracking-wide">{principle.desc}</p>
-        </motion.div>
-    );
-}
-
-function TimelineEntry({ item, index }: { item: typeof ABOUT_TIMELINE[0]; index: number }) {
-    const ref = useRef<HTMLDivElement>(null);
-    const inView = useInView(ref, { once: true });
-
-    return (
-        <motion.div
-            ref={ref}
-            initial={{ opacity: 0, x: -20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: index * 0.15, duration: 0.5 }}
-            className="flex gap-6 py-8 border-b border-white/[0.04] group"
-        >
-            <div className="shrink-0 w-20">
-                <span className="font-serif text-3xl text-gold tracking-tight">{item.year}</span>
-            </div>
-            <div className="relative pl-6 border-l border-white/[0.08]">
-                <div className="absolute left-[-4px] top-2 w-2 h-2 rounded-full bg-gold/80 shadow-[0_0_8px_rgba(212,175,55,0.5)]" />
-                <span className="font-mono text-[8px] text-gold tracking-[0.3em] mb-2 block">{item.phase}</span>
-                <p className="font-mono text-sm text-white/90 leading-relaxed tracking-wide">{item.event}</p>
-            </div>
-        </motion.div>
     );
 }

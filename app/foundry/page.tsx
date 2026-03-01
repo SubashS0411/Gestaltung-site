@@ -1,228 +1,277 @@
 ﻿"use client";
 
-import { useState, useEffect, useCallback, useRef, useMemo, Suspense } from "react";
+import { useState, useRef, Suspense, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Stars, Environment } from "@react-three/drei";
+import { Stars, PresentationControls } from "@react-three/drei";
 import { EffectComposer, Noise, Vignette, Bloom } from "@react-three/postprocessing";
-import { motion, AnimatePresence } from "framer-motion";
-import { FOUNDRY_DEFAULT_CODE, FOUNDRY_COMMANDS } from "@/lib/data";
-import { Play, Terminal, Command, Settings, Copy, Check, ChevronRight, Maximize2, Minimize2 } from "lucide-react";
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { FOUNDRY_DEFAULT_CODE, FOUNDRY_COMMANDS, FOUNDRY_COMPONENTS } from "@/lib/data";
+import { Play, Terminal, Command, Settings, ChevronRight, Maximize2, Minimize2, ChevronUp, GripVertical } from "lucide-react";
 import * as THREE from "three";
 
-/* ═══ 3D Gold Hexagon ═══ */
-function GoldHexagon({ scrollProgress = 0 }: { scrollProgress: number }) {
+const SPRING_MECH = { type: "spring" as const, stiffness: 300, damping: 25 };
+const SPRING_HEAVY = { type: "spring" as const, stiffness: 150, damping: 30 };
+
+/* ═══ 3D Draggable Rigid Body ═══ */
+function HeavyGoldHexagon() {
     const meshRef = useRef<THREE.Mesh>(null);
     const edgesRef = useRef<THREE.LineSegments>(null);
-
-    const hexShape = useMemo(() => {
-        const shape = new THREE.Shape();
-        for (let i = 0; i <= 6; i++) {
-            const angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
-            const x = Math.cos(angle) * 1.5;
-            const y = Math.sin(angle) * 1.5;
-            if (i === 0) shape.moveTo(x, y);
-            else shape.lineTo(x, y);
-        }
-        return shape;
-    }, []);
-
-    const geometry = useMemo(() => new THREE.ExtrudeGeometry(hexShape, { depth: 0.4, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 3 }), [hexShape]);
-    const edgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
+    const shape = new THREE.Shape();
+    for (let i = 0; i <= 6; i++) {
+        const angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
+        shape.lineTo(Math.cos(angle) * 1.8, Math.sin(angle) * 1.8);
+    }
+    const geometry = new THREE.ExtrudeGeometry(shape, { depth: 0.8, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.1, bevelSegments: 3 });
+    const edgesGeometry = new THREE.EdgesGeometry(geometry);
 
     useFrame(({ clock }) => {
-        if (meshRef.current) {
-            meshRef.current.rotation.y = clock.getElapsedTime() * 0.3;
-            meshRef.current.rotation.x = Math.sin(clock.getElapsedTime() * 0.2) * 0.3;
-        }
-        if (edgesRef.current) {
-            edgesRef.current.rotation.y = clock.getElapsedTime() * 0.3;
-            edgesRef.current.rotation.x = Math.sin(clock.getElapsedTime() * 0.2) * 0.3;
-        }
+        if (!meshRef.current || !edgesRef.current) return;
+        meshRef.current.rotation.y += Math.sin(clock.elapsedTime * 0.5) * 0.002;
+        edgesRef.current.rotation.y += Math.sin(clock.elapsedTime * 0.5) * 0.002;
     });
 
-    // Dynamic light intensity based on scroll
-    const lightIntensity = 0.3 + scrollProgress * 0.7;
+    return (
+        <PresentationControls global snap rotation={[0, 0, 0]} polar={[-Math.PI / 3, Math.PI / 3]} azimuth={[-Math.PI / 1.5, Math.PI / 1.5]} speed={0.5} zoom={0.8} cursor={true}>
+            <group>
+                <mesh ref={meshRef} geometry={geometry}>
+                    <meshStandardMaterial color="#D4AF37" metalness={0.9} roughness={0.15} />
+                </mesh>
+                <lineSegments ref={edgesRef} geometry={edgesGeometry}>
+                    <lineBasicMaterial color="#ffffff" transparent opacity={0.2} />
+                </lineSegments>
+            </group>
+        </PresentationControls>
+    );
+}
 
+function FoundryScene() {
     return (
         <>
-            <pointLight position={[3, 3, 3]} intensity={lightIntensity} color="#D4AF37" />
-            <pointLight position={[-3, -2, 2]} intensity={lightIntensity * 0.5} color="#F3E5AB" />
-            <Float speed={1.2} rotationIntensity={0.4} floatIntensity={0.5}>
-                <group position={[0, 0, 0]}>
-                    <mesh ref={meshRef} geometry={geometry}>
-                        <meshStandardMaterial color="#D4AF37" metalness={0.95} roughness={0.1} envMapIntensity={1.5} />
-                    </mesh>
-                    <lineSegments ref={edgesRef} geometry={edgesGeometry}>
-                        <lineBasicMaterial color="#F3E5AB" transparent opacity={0.4} />
-                    </lineSegments>
-                </group>
-            </Float>
+            <ambientLight intensity={0.2} />
+            <pointLight position={[5, 5, 5]} intensity={0.8} color="#D4AF37" decay={2} />
+            <pointLight position={[-5, -5, -5]} intensity={0.4} color="#ffffff" decay={2} />
+            <HeavyGoldHexagon />
+            <Stars radius={30} depth={15} count={100} factor={2} saturation={0} fade speed={0.1} />
+            <EffectComposer>
+                <Bloom luminanceThreshold={0.6} intensity={0.5} />
+                <Noise opacity={0.03} />
+                <Vignette eskil={false} offset={0.2} darkness={0.8} />
+            </EffectComposer>
         </>
     );
 }
 
-function FoundryScene({ scrollProgress }: { scrollProgress: number }) {
+/* ═══ Active Console ═══ */
+function ActiveConsole({ output, setOutput }: { output: string[]; setOutput: React.Dispatch<React.SetStateAction<string[]>> }) {
+    const consoleRef = useRef<HTMLDivElement>(null);
+
+    // Auto-print success codes
+    useEffect(() => {
+        const codes = [
+            "[RENDER] Frame 60fps stable — GPU composite ✓",
+            "[HEAP] Memory: 42MB / 256MB — optimal ✓",
+            "[PHYSICS] Spring dampener calibrated — mass: 3 ✓",
+            "[SHADER] Gold metalness pass compiled — 0.2ms ✓",
+            "[LAYOUT] Zero CLS detected — stable ✓",
+            "[NET] WebSocket latency: 8ms — connected ✓",
+        ];
+        let i = 0;
+        const interval = setInterval(() => {
+            setOutput(o => [...o.slice(-30), `[${new Date().toLocaleTimeString()}] ${codes[i % codes.length]}`]);
+            i++;
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [setOutput]);
+
+    // Auto-scroll
+    useEffect(() => {
+        if (consoleRef.current) {
+            consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
+        }
+    }, [output]);
+
     return (
-        <>
-            <ambientLight intensity={0.15} />
-            <GoldHexagon scrollProgress={scrollProgress} />
-            <Stars radius={30} depth={15} count={300} factor={2} saturation={0} fade speed={0.3} />
-            <EffectComposer>
-                <Bloom luminanceThreshold={0.7} intensity={0.5} />
-                <Noise opacity={0.02} />
-                <Vignette eskil={false} offset={0.1} darkness={0.6} />
-            </EffectComposer>
-        </>
+        <div className="h-full flex flex-col">
+            <div className="flex items-center gap-2 px-4 py-1.5 bg-[#080808] border-b border-white/[0.02] shrink-0">
+                <span className="font-mono text-[8px] text-gold tracking-[0.3em]">CONSOLE DIAGNOSTICS</span>
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            </div>
+            <div ref={consoleRef} className="flex-1 p-3 overflow-y-auto font-mono text-[9px] space-y-1" style={{ scrollbarWidth: "none" }}>
+                {output.map((line, i) => (
+                    <div key={`${i}-${line.slice(0, 20)}`} className={line.includes("✓") ? "text-emerald-400" : line.includes("ERROR") ? "text-red-400" : line.includes("[CMD]") ? "text-gold" : "text-white/50"}>
+                        {line}
+                    </div>
+                ))}
+                <div className="flex items-center gap-1 mt-1 text-gold"><ChevronRight className="w-3 h-3" /><span className="animate-pulse">_</span></div>
+            </div>
+        </div>
+    );
+}
+
+/* ═══ Component Injector Drawer ═══ */
+function ComponentInjector({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
+    return (
+        <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: isOpen ? "0%" : "calc(100% - 40px)" }}
+            transition={SPRING_HEAVY}
+            className="absolute bottom-0 left-0 right-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-gold/20 rounded-t-xl"
+        >
+            {/* Handle */}
+            <button onClick={onToggle} className="w-full flex items-center justify-center gap-2 py-2 cursor-pointer hover:bg-gold/[0.03] transition-colors">
+                <ChevronUp className={`w-4 h-4 text-gold transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                <span className="font-mono text-[8px] text-gold tracking-[0.3em]">COMPONENT INJECTOR</span>
+            </button>
+
+            <div className="px-6 pb-6 grid grid-cols-6 gap-3">
+                {FOUNDRY_COMPONENTS.map((comp) => (
+                    <motion.div
+                        key={comp.id}
+                        whileHover={{ scale: 1.05, y: -4 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex flex-col items-center justify-center gap-2 h-24 rounded-lg border border-white/[0.06] hover:border-gold/30 cursor-grab active:cursor-grabbing transition-colors relative overflow-hidden group/comp"
+                    >
+                        <div className="absolute inset-0 bg-black/60 z-10 transition-opacity group-hover/comp:opacity-40" />
+                        <Image src={comp.imageUrl} alt={comp.name} fill className="object-cover opacity-50 group-hover/comp:opacity-80 transition-all duration-700 filter contrast-125 saturate-50 group-hover/comp:scale-110" />
+                        <span className="text-2xl z-20 drop-shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ color: comp.color }}>{comp.icon}</span>
+                        <span className="font-mono text-[8px] text-white/90 tracking-wider z-20 drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">{comp.name}</span>
+                    </motion.div>
+                ))}
+            </div>
+        </motion.div>
     );
 }
 
 /* ═══ Main Page ═══ */
 export default function FoundryPage() {
     const [code] = useState(FOUNDRY_DEFAULT_CODE);
-    const [output, setOutput] = useState<string[]>(["[FOUNDRY] Ready. Awaiting protocol...", "[SYSTEM] Compiler initialized — v2.4.0", "[SYSTEM] Gold particle shader preloaded"]);
+    const [output, setOutput] = useState<string[]>(["[FOUNDRY] Ready. Target locked.", "[SYSTEM] Rigid body physics engine initialized.", "[SYSTEM] Component injector loaded — 6 blocks available."]);
     const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-    const [copied, setCopied] = useState(false);
     const [fullscreen, setFullscreen] = useState(false);
-    const [scrollProgress, setScrollProgress] = useState(0);
-    const editorRef = useRef<HTMLDivElement>(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
-    const handleKeyDown = useCallback((e: KeyboardEvent) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setCommandPaletteOpen((p) => !p); }
-        if (e.key === "Escape") setCommandPaletteOpen(false);
-    }, []);
+    // Draggable divider
+    const dividerX = useMotionValue(45); // % from left
+    const springDividerX = useSpring(dividerX, SPRING_HEAVY);
+    const isDragging = useRef(false);
 
-    useEffect(() => {
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [handleKeyDown]);
-
-    const handleEditorScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const el = e.currentTarget;
-        const progress = el.scrollTop / (el.scrollHeight - el.clientHeight || 1);
-        setScrollProgress(Math.min(progress, 1));
-    };
+    const handleDividerDrag = useCallback((e: React.MouseEvent) => {
+        if (!isDragging.current) return;
+        const pct = (e.clientX / window.innerWidth) * 100;
+        dividerX.set(Math.max(25, Math.min(75, pct)));
+    }, [dividerX]);
 
     const runCode = () => {
-        setOutput((o) => [...o, `[${new Date().toLocaleTimeString()}] Compiling protocol...`, "[COMPILER] AST parsed — 0 errors", "[COMPILER] Bundle size: 4.1 KB (gzipped: 1.8 KB)", "[DEPLOY] Component rendered successfully ✓"]);
-    };
-
-    const executeCommand = (action: string) => {
-        setCommandPaletteOpen(false);
-        switch (action) {
-            case "deploy": setOutput((o) => [...o, "[DEPLOY] Deploying to edge network... Done ✓"]); break;
-            case "diagnose": setOutput((o) => [...o, "[DIAG] Memory: 12MB | FPS: 60 | Layout shifts: 0 | CLS: 0.00"]); break;
-            case "style": setOutput((o) => [...o, "[INJECT] Void & Gold stylesheet injected ✓"]); break;
-            case "export": setOutput((o) => [...o, "[EXPORT] Protocol exported as .gestaltung package"]); break;
-            case "preview": setOutput((o) => [...o, "[PREVIEW] Live preview toggled"]); break;
-            case "clear": setOutput(["[FOUNDRY] Console cleared."]); break;
-        }
-    };
-
-    const copyCode = async () => {
-        try { await navigator.clipboard.writeText(code); } catch { }
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        setOutput((o) => [...o, `[${new Date().toLocaleTimeString()}] Compiling...`, "[COMPILER] AST parsed — 0 errors", "[DEPLOY] Component injected to active port ✓"]);
     };
 
     return (
-        <div className="relative min-h-screen bg-[#050505]">
-            {/* Content */}
-            <div className="relative z-[3] max-w-7xl mx-auto px-6 md:px-12 pt-32 pb-20">
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-                    <p className="font-mono text-[10px] text-gold tracking-[0.5em] mb-4">04 — THE LABORATORY</p>
-                    <h1 className="font-serif text-5xl md:text-7xl text-white tracking-tight mb-3 drop-shadow-lg">FOUNDRY</h1>
-                    <p className="font-mono text-sm text-white/80 tracking-wider mb-10">Live synthesis & compilation — where protocols are forged.</p>
-                </motion.div>
+        <div
+            className="relative h-screen bg-[#050505] overflow-hidden flex flex-col pt-16"
+            onMouseMove={handleDividerDrag}
+            onMouseUp={() => { isDragging.current = false; }}
+        >
+            {/* Blast Door Preloader */}
+            <motion.div className="absolute inset-y-0 left-0 w-1/2 bg-[#020202] z-[80] border-r-4 border-gold shadow-[20px_0_50px_rgba(0,0,0,0.9)]" initial={{ x: 0 }} animate={{ x: "-100%" }} transition={{ duration: 1, delay: 0.2, ease: [0.76, 0, 0.24, 1] }} />
+            <motion.div className="absolute inset-y-0 right-0 w-1/2 bg-[#020202] z-[80] border-l-4 border-gold shadow-[-20px_0_50px_rgba(0,0,0,0.9)]" initial={{ x: 0 }} animate={{ x: "100%" }} transition={{ duration: 1, delay: 0.2, ease: [0.76, 0, 0.24, 1] }} />
 
-                {/* IDE */}
-                <div className={`rounded-2xl border border-white/[0.08] bg-[#0a0a0a] overflow-hidden ${fullscreen ? "fixed inset-4 z-[80]" : ""}`}>
-                    {/* Toolbar */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
-                        <div className="flex items-center gap-3">
-                            <div className="flex gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-red-500/60" /><div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" /><div className="w-2.5 h-2.5 rounded-full bg-emerald-500/60" /></div>
-                            <span className="font-mono text-[9px] text-white/80 tracking-wider">particle-burst.tsx</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <button onClick={() => setCommandPaletteOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:border-gold/20 transition-colors">
-                                <Command className="w-3 h-3 text-white/80 stroke-[1]" /><span className="font-mono text-[8px] text-white/80 tracking-wider">⌘K</span>
-                            </button>
-                            <button onClick={runCode} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold/10 border border-gold/30 hover:bg-gold hover:text-black transition-all group">
-                                <Play className="w-3 h-3 text-gold group-hover:text-black stroke-[1] fill-current" /><span className="font-mono text-[8px] text-gold group-hover:text-black tracking-wider">RUN</span>
-                            </button>
-                            <button onClick={copyCode} className="p-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:border-gold/20 transition-colors">
-                                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-white/80 stroke-[1]" />}
-                            </button>
-                            <button onClick={() => setFullscreen(!fullscreen)} className="p-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:border-gold/20 transition-colors">
-                                {fullscreen ? <Minimize2 className="w-3.5 h-3.5 text-white/80 stroke-[1]" /> : <Maximize2 className="w-3.5 h-3.5 text-white/80 stroke-[1]" />}
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Split */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[60vh]">
-                        {/* LEFT — Editor */}
-                        <div className="border-r border-white/[0.06]">
-                            <div className="flex items-center gap-2 px-4 py-2 border-b border-white/[0.04] bg-white/[0.01]">
-                                <Terminal className="w-3 h-3 text-gold stroke-[1]" /><span className="font-mono text-[8px] text-gold tracking-[0.3em]">EDITOR</span>
-                            </div>
-                            <div ref={editorRef} onScroll={handleEditorScroll} className="relative p-4 overflow-auto max-h-[55vh]">
-                                <pre className="font-mono text-[11px] leading-[1.8]">
-                                    {code.split("\n").map((line, i) => (
-                                        <div key={i} className="flex">
-                                            <span className="w-8 text-right pr-4 text-white/80 select-none shrink-0 text-[10px]">{i + 1}</span>
-                                            <code className={`${line.includes("//") || line.includes("/*") || line.includes("* ") ? "text-white/80" :
-                                                    line.includes("export") || line.includes("import") || line.includes("const") || line.includes("function") || line.includes("return") || line.includes("interface") ? "text-gold" :
-                                                        line.includes("className") ? "text-emerald-400/90" :
-                                                            line.includes('"') || line.includes("'") || line.includes('`') ? "text-amber-300/90" : "text-white/90"
-                                                }`}>{line || " "}</code>
-                                        </div>
-                                    ))}
-                                </pre>
-                            </div>
-                        </div>
-
-                        {/* RIGHT — Live 3D Preview */}
-                        <div>
-                            <div className="flex items-center gap-2 px-4 py-2 border-b border-white/[0.04] bg-white/[0.01]">
-                                <Settings className="w-3 h-3 text-gold stroke-[1]" /><span className="font-mono text-[8px] text-gold tracking-[0.3em]">LIVE 3D PREVIEW</span>
-                            </div>
-                            <div className="h-[55vh] bg-[#030303]">
-                                <Canvas camera={{ position: [0, 0, 5], fov: 45 }} gl={{ antialias: true }} dpr={[1, 1.5]}>
-                                    <Suspense fallback={null}><FoundryScene scrollProgress={scrollProgress} /></Suspense>
-                                </Canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Console Output */}
-                    <div className="border-t border-white/[0.06]">
-                        <div className="flex items-center gap-2 px-4 py-2 bg-white/[0.01]"><ChevronRight className="w-3 h-3 text-gold" /><span className="font-mono text-[8px] text-gold tracking-[0.3em]">CONSOLE</span></div>
-                        <div className="p-4 max-h-[20vh] overflow-y-auto font-mono text-[10px] space-y-1">
-                            {output.map((line, i) => (
-                                <motion.div key={`${i}-${line}`} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}
-                                    className={`${line.includes("✓") ? "text-emerald-400" : line.includes("ERROR") ? "text-red-400" : line.includes("[SYSTEM]") || line.includes("[FOUNDRY]") ? "text-gold/80" : "text-white/80"}`}>{line}</motion.div>
-                            ))}
-                            <div className="flex items-center gap-1 mt-2"><ChevronRight className="w-3 h-3 text-gold" /><span className="text-gold/80 animate-pulse">_</span></div>
-                        </div>
-                    </div>
+            {/* ═══ Section 1: Command Palette Bar ═══ */}
+            <div className="flex-none px-6 py-4 flex items-center justify-between border-b border-white/[0.06] bg-[#080808]">
+                <div>
+                    <h1 className="font-serif text-2xl text-white tracking-widest drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">FOUNDRY</h1>
+                    <p className="font-mono text-[9px] text-gold tracking-[0.4em]">MECHANICAL INTERLOCK ENABLED. DRAG TO TEST MASS.</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <button onClick={() => setCommandPaletteOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white/[0.03] border border-white/[0.06] hover:border-gold/30 transition-colors">
+                        <Command className="w-3 h-3 text-white/50" /><span className="font-mono text-[8px] text-white/80 tracking-wider">⌘K</span>
+                    </button>
+                    <button onClick={runCode} className="flex items-center gap-1.5 px-4 py-1.5 rounded bg-gold/10 border border-gold/40 hover:bg-gold hover:text-black transition-all group">
+                        <Play className="w-3 h-3 text-gold group-hover:text-black fill-current" /><span className="font-mono text-[9px] font-bold text-gold group-hover:text-black tracking-wider">EXECUTE</span>
+                    </button>
+                    <button onClick={() => setFullscreen(!fullscreen)} className="p-1.5 rounded bg-white/[0.03] border border-white/[0.06] hover:border-gold/30 transition-colors">
+                        {fullscreen ? <Minimize2 className="w-4 h-4 text-white/50" /> : <Maximize2 className="w-4 h-4 text-white/50" />}
+                    </button>
                 </div>
             </div>
 
-            {/* Command Palette */}
+            {/* ═══ Section 2: Split IDE with Draggable Divider ═══ */}
+            <div className={`flex-1 flex flex-col lg:flex-row overflow-hidden relative ${fullscreen ? "fixed inset-0 z-[70] bg-[#050505]" : ""}`}>
+                {/* LEFT — Code Editor */}
+                <motion.div
+                    initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.6, ...SPRING_MECH }}
+                    className="flex flex-col border-r border-white/[0.06] bg-[#030303]"
+                    style={{ width: `${springDividerX.get()}%`, minWidth: "25%", maxWidth: "75%" }}
+                >
+                    <div className="flex items-center gap-2 px-4 py-2 border-b border-white/[0.04] bg-[#080808] shrink-0">
+                        <Terminal className="w-3 h-3 text-gold" /><span className="font-mono text-[8px] text-gold tracking-[0.3em]">EDITOR.TSX</span>
+                    </div>
+                    <div className="flex-1 p-4 overflow-auto font-mono text-[11px] leading-[1.8] text-white/80" style={{ scrollbarWidth: "none" }}>
+                        <pre>
+                            {code.split("\n").map((line, i) => (
+                                <div key={i} className="flex">
+                                    <span className="w-8 text-right pr-4 text-white/30 select-none shrink-0 text-[10px]">{i + 1}</span>
+                                    <code className={
+                                        line.includes("//") ? "text-white/40" :
+                                            line.includes("export") || line.includes("import") || line.includes("return") ? "text-gold" :
+                                                line.includes("className") ? "text-emerald-400" :
+                                                    line.includes('"') || line.includes("'") ? "text-amber-300" : "text-white/90"
+                                    }>{line || " "}</code>
+                                </div>
+                            ))}
+                        </pre>
+                    </div>
+
+                    {/* ═══ Section 4: Console Diagnostics ═══ */}
+                    <div className="h-48 border-t border-white/[0.06] bg-[#010101]">
+                        <ActiveConsole output={output} setOutput={setOutput} />
+                    </div>
+                </motion.div>
+
+                {/* Draggable Divider */}
+                <motion.div
+                    onMouseDown={() => { isDragging.current = true; }}
+                    className="hidden lg:flex w-3 cursor-col-resize items-center justify-center bg-[#050505] hover:bg-gold/10 transition-colors z-30 shrink-0"
+                >
+                    <GripVertical className="w-3 h-3 text-white/20" />
+                </motion.div>
+
+                {/* RIGHT — Live 3D Preview */}
+                <motion.div
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 1 }}
+                    className="flex-1 relative cursor-grab active:cursor-grabbing bg-[radial-gradient(circle_at_50%_50%,#111_0%,#000_100%)]"
+                >
+                    <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+                        <Settings className="w-3 h-3 text-gold animate-[spin_4s_linear_infinite]" />
+                        <span className="font-mono text-[8px] text-gold tracking-[0.3em]">LIVE 3D PREVIEW / MASS: HEAVY</span>
+                    </div>
+                    <Canvas camera={{ position: [0, 0, 6], fov: 45 }} gl={{ antialias: true, alpha: true }} dpr={[1, 2]}>
+                        <Suspense fallback={null}><FoundryScene /></Suspense>
+                    </Canvas>
+
+                    {/* ═══ Section 3: Component Injector ═══ */}
+                    <ComponentInjector isOpen={drawerOpen} onToggle={() => setDrawerOpen(!drawerOpen)} />
+                </motion.div>
+            </div>
+
+            {/* Command Palette Modal */}
             <AnimatePresence>
                 {commandPaletteOpen && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[90] flex items-start justify-center pt-[20vh]" onClick={() => setCommandPaletteOpen(false)}>
-                        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-                        <motion.div initial={{ opacity: 0, y: -20, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.96 }} transition={{ duration: 0.2 }}
-                            onClick={(e) => e.stopPropagation()} className="relative w-full max-w-lg bg-[#0a0a0a] border border-white/[0.08] rounded-xl overflow-hidden shadow-2xl">
-                            <div className="px-4 py-3 border-b border-white/[0.06]">
-                                <div className="flex items-center gap-2"><Command className="w-4 h-4 text-gold stroke-[1]" /><span className="font-mono text-[9px] text-gold tracking-[0.3em]">FOUNDRY COMMAND NETWORK</span></div>
-                            </div>
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-start justify-center pt-32 bg-black/80 backdrop-blur-xl"
+                        onClick={() => setCommandPaletteOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }} transition={SPRING_MECH}
+                            onClick={(e) => e.stopPropagation()} className="w-full max-w-lg bg-[#0a0a0a] border border-gold/20 rounded-xl overflow-hidden shadow-[0_0_50px_rgba(212,175,55,0.1)]"
+                        >
+                            <div className="px-4 py-3 border-b border-white/[0.06]"><span className="font-mono text-[9px] text-gold tracking-[0.3em]">FOUNDRY COMMAND NETWORK</span></div>
                             <div className="p-2">
                                 {FOUNDRY_COMMANDS.map((cmd) => (
-                                    <button key={cmd.action} onClick={() => executeCommand(cmd.action)} className="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-gold/[0.05] transition-colors group">
+                                    <button key={cmd.action} onClick={() => { setCommandPaletteOpen(false); setOutput(o => [...o, `[CMD] Executed: ${cmd.label}`]); }} className="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-gold/10 transition-colors group">
                                         <span className="font-mono text-xs text-white/90 tracking-wider group-hover:text-gold transition-colors">{cmd.label}</span>
-                                        <span className="font-mono text-[9px] text-white/80 bg-white/[0.04] px-2 py-0.5 rounded">{cmd.shortcut}</span>
+                                        <span className="font-mono text-[9px] text-gold bg-gold/10 px-2 py-0.5 rounded border border-gold/20">{cmd.shortcut}</span>
                                     </button>
                                 ))}
                             </div>

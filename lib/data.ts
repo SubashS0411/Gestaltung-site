@@ -1,7 +1,39 @@
 /* ═══════════════════════════════════════════════════════════════
-   GESTALTUNG — Data Layer v3.0
-   Elite content for all 5 core pages.
+   GESTALTUNG — Data Layer v4.0
+   Elite content for all 6 core pages — Full-Scale Expansion.
    ═══════════════════════════════════════════════════════════════ */
+
+// ══════════════════════════════════════
+// HOME — Z-Axis Cinematic Narrative
+// ══════════════════════════════════════
+
+export const PHILOSOPHY_LINES = [
+  "WE DO NOT DESIGN.",
+  "WE CALCULATE.",
+  "Every pixel is an equation.",
+  "Every transition is a proof.",
+  "Every interface is a theorem.",
+  "Beauty is the byproduct of precision.",
+];
+
+export const ARSENAL_ITEMS = [
+  { id: "A-001", label: "CODE", description: "Engineered architectures that breathe.", shape: "torus" as const },
+  { id: "A-002", label: "DESIGN", description: "Composition as mathematical certainty.", shape: "icosahedron" as const },
+  { id: "A-003", label: "LOGIC", description: "State machines with zero ambiguity.", shape: "octahedron" as const },
+];
+
+export const GLOBAL_GRID_NODES = [
+  { id: "N-01", x: 22, y: 35, label: "TOKYO", architects: 342, active: true },
+  { id: "N-02", x: 48, y: 28, label: "BERLIN", architects: 289, active: true },
+  { id: "N-03", x: 75, y: 42, label: "SAN FRANCISCO", architects: 456, active: true },
+  { id: "N-04", x: 55, y: 55, label: "DUBAI", architects: 178, active: true },
+  { id: "N-05", x: 35, y: 60, label: "MUMBAI", architects: 234, active: false },
+  { id: "N-06", x: 80, y: 25, label: "LONDON", architects: 312, active: true },
+  { id: "N-07", x: 15, y: 50, label: "SYDNEY", architects: 145, active: true },
+  { id: "N-08", x: 62, y: 68, label: "SÃO PAULO", architects: 198, active: false },
+  { id: "N-09", x: 42, y: 18, label: "STOCKHOLM", architects: 167, active: true },
+  { id: "N-10", x: 30, y: 45, label: "SINGAPORE", architects: 223, active: true },
+];
 
 // ══════════════════════════════════════
 // REGISTRY — The Asset Vault
@@ -11,6 +43,7 @@ export interface RegistryAsset {
   id: string;
   name: string;
   description: string;
+  imageUrl: string;
   category: "MOTION" | "SCROLL" | "EFFECTS" | "UI" | "LAYOUT" | "DATA";
   framework: "REACT" | "NEXT.JS" | "VANILLA";
   tier: "FREE" | "BLACK EDITION";
@@ -27,7 +60,8 @@ export const REGISTRY_ASSETS: RegistryAsset[] = [
   {
     id: "R-001",
     name: "Kinetic Scroll Hijacker",
-    description: "Full-viewport scroll interception engine with velocity-mapped parallax layers. Hijacks native scroll and replaces it with physics-based momentum using configurable damping curves. Supports nested scroll contexts.",
+    description: "Full-viewport intercept engine with velocity-mapped parallax layers. Replaces native scroll with configurable physics-based momentum.",
+    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
     category: "SCROLL",
     framework: "NEXT.JS",
     tier: "BLACK EDITION",
@@ -65,7 +99,8 @@ export default function KineticScroll({ children }) {
   {
     id: "R-002",
     name: "Liquid WebGL Distort",
-    description: "Real-time mesh distortion shader that responds to cursor proximity. Renders a displacement map over any DOM element using a lightweight WebGL canvas overlay. GPU-accelerated with fallback to CSS transforms.",
+    description: "Real-time displacement shader responding to cursor proximity. GPU-accelerated liquid mesh overlay for DOM elements.",
+    imageUrl: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop",
     category: "EFFECTS",
     framework: "REACT",
     tier: "BLACK EDITION",
@@ -106,7 +141,8 @@ export default function LiquidDistort({ children, intensity = 0.05 }) {
   {
     id: "R-003",
     name: "Magnetic Auth Portal",
-    description: "Physics-based authentication form with magnetic field input focusing. Inputs gravitate toward the cursor with spring dynamics. Includes encrypted animation states for loading, success, and error with particle effects.",
+    description: "Physics-based authentication form. Inputs gravitate toward the cursor with spring dynamics and encrypted animation states.",
+    imageUrl: "https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=2832&auto=format&fit=crop",
     category: "UI",
     framework: "NEXT.JS",
     tier: "FREE",
@@ -154,7 +190,8 @@ export default function MagneticAuth() {
   {
     id: "R-004",
     name: "Void Gradient Mesh",
-    description: "Animated CSS gradient mesh background with 6 control points. Each point orbits on unique sine wave paths creating an organic, breathing background. Zero-dependency, pure CSS animation with GPU compositing.",
+    description: "Animated CSS gradient mesh with 6 control points orbiting on sine paths. Pure CSS architecture, zero dependencies.",
+    imageUrl: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=2670&auto=format&fit=crop",
     category: "EFFECTS",
     framework: "VANILLA",
     tier: "FREE",
@@ -182,7 +219,8 @@ export default function MagneticAuth() {
   {
     id: "R-005",
     name: "Neural Data Table",
-    description: "High-density data table component with row-level hover highlighting, sortable columns, gold accent on active sort, and smooth scroll virtualization for 10K+ rows. Built for dashboards and analytics.",
+    description: "High-density data matrix. Row-level spatial highlighting, kinetic sorting, and 10K+ row smooth virtualization.",
+    imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2670&auto=format&fit=crop",
     category: "DATA",
     framework: "REACT",
     tier: "BLACK EDITION",
@@ -232,7 +270,8 @@ export default function NeuralTable({ columns, data, onSort }) {
   {
     id: "R-006",
     name: "Cinematic Page Transition",
-    description: "Full-screen curtain wipe transition system for Next.js App Router. Supports directional wipes (horizontal, vertical, diagonal) with configurable easing. Includes route-aware preloading and skeleton state management.",
+    description: "Full-screen curtain wipe engine for App Router. Directional wipes with configurable timeline easing and preloading.",
+    imageUrl: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=2670&auto=format&fit=crop",
     category: "MOTION",
     framework: "NEXT.JS",
     tier: "BLACK EDITION",
@@ -264,7 +303,114 @@ export default function PageTransition({ children }) {
   );
 }`,
   },
+  {
+    id: "R-007",
+    name: "Magnetic Navbar",
+    description: "Navigation elements pull toward cursor with mass and tension physics, emitting gold particle trails on deep interactions.",
+    imageUrl: "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&w=2670&auto=format&fit=crop",
+    category: "UI",
+    framework: "NEXT.JS",
+    tier: "BLACK EDITION",
+    performanceCost: "0.15ms Frame Drop",
+    size: "5.3 KB",
+    dependencies: ["framer-motion", "lucide-react"],
+    downloads: 22100,
+    isNew: true,
+    previewGradient: "linear-gradient(180deg, rgba(212,175,55,0.06) 0%, #050505 100%)",
+    code: `"use client";
+import { useRef } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+
+function MagneticLink({ children, href }) {
+  const ref = useRef(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, { damping: 15, stiffness: 300 });
+  const sy = useSpring(y, { damping: 15, stiffness: 300 });
+
+  return (
+    <motion.a ref={ref} href={href}
+      style={{ x: sx, y: sy }}
+      onMouseMove={(e) => {
+        const r = ref.current.getBoundingClientRect();
+        x.set((e.clientX - r.left - r.width / 2) * 0.3);
+        y.set((e.clientY - r.top - r.height / 2) * 0.3);
+      }}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+      className="relative font-mono text-xs text-white/80 hover:text-gold
+        tracking-[0.2em] transition-colors transform-gpu">
+      {children}
+    </motion.a>
+  );
+}`,
+  },
+  {
+    id: "R-008",
+    name: "WebGL Distortion Button",
+    description: "Interactive element with real-time ripple displacement mapping. Click triggers a radial shockwave at the contact point.",
+    imageUrl: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2670&auto=format&fit=crop",
+    category: "EFFECTS",
+    framework: "REACT",
+    tier: "BLACK EDITION",
+    performanceCost: "1.2ms Frame Drop",
+    size: "7.8 KB",
+    dependencies: ["three", "framer-motion"],
+    downloads: 6800,
+    isNew: true,
+    previewGradient: "radial-gradient(circle at 50% 50%, rgba(212,175,55,0.12) 0%, #050505 60%)",
+    code: `"use client";
+import { useRef, useCallback } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+
+export default function DistortionButton({ children, onClick }) {
+  const ref = useRef(null);
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+  const springX = useSpring(mouseX, { damping: 20, stiffness: 200 });
+  const springY = useSpring(mouseY, { damping: 20, stiffness: 200 });
+  const scale = useSpring(1, { damping: 20, stiffness: 300 });
+
+  const handleMove = useCallback((e) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    mouseX.set((e.clientX - rect.left) / rect.width);
+    mouseY.set((e.clientY - rect.top) / rect.height);
+  }, [mouseX, mouseY]);
+
+  return (
+    <motion.button ref={ref}
+      onMouseMove={handleMove}
+      onMouseEnter={() => scale.set(1.05)}
+      onMouseLeave={() => { scale.set(1); mouseX.set(0.5); mouseY.set(0.5); }}
+      onMouseDown={() => scale.set(0.97)}
+      onMouseUp={() => scale.set(1.05)}
+      onClick={onClick}
+      style={{ scale }}
+      className="relative overflow-hidden px-10 py-4 bg-gold/10 border
+        border-gold/30 text-gold font-mono text-sm tracking-widest
+        hover:bg-gold hover:text-black transition-all transform-gpu">
+      <motion.div className="absolute inset-0 bg-[radial-gradient(circle,rgba(212,175,55,0.3)_0%,transparent_60%)]
+        pointer-events-none opacity-0 hover:opacity-100"
+        style={{ left: springX, top: springY, x: "-50%", y: "-50%", width: "200%", height: "200%" }} />
+      {children}
+    </motion.button>
+  );
+}`,
+  },
 ];
+
+// ═══ Recently Decrypted — Dense list for Registry page ═══
+export const RECENTLY_DECRYPTED = [
+  { id: "RD-001", name: "Parallax Depth Stack", category: "SCROLL", author: "CIPHER-7", date: "2h ago", downloads: 3400, preview: "/images/gold-neural-streams.png" },
+  { id: "RD-002", name: "Glassmorphic Modal", category: "UI", author: "VOID-ARCHITECT", date: "4h ago", downloads: 5200, preview: "/images/gold-hexagon-grid.png" },
+  { id: "RD-003", name: "Noise Grain Overlay", category: "EFFECTS", author: "GOLD-STANDARD", date: "6h ago", downloads: 8900, preview: "/images/gold-pulse-particles.png" },
+  { id: "RD-004", name: "Spring Mass Slider", category: "MOTION", author: "NODE-451", date: "8h ago", downloads: 2100, preview: "/images/node-fiber.png" },
+  { id: "RD-005", name: "Void Card Skeleton", category: "UI", author: "ARCHITECT-X", date: "12h ago", downloads: 6700, preview: "/images/gold-neural-streams.png" },
+  { id: "RD-006", name: "Chromatic Text Hover", category: "EFFECTS", author: "CRYSTAL-NODE", date: "1d ago", downloads: 4300, preview: "/images/gold-hexagon-grid.png" },
+  { id: "RD-007", name: "Inertia Table Sort", category: "DATA", author: "CIPHER-7", date: "1d ago", downloads: 3800, preview: "/images/gold-pulse-particles.png" },
+  { id: "RD-008", name: "Scroll-Linked Loader", category: "SCROLL", author: "VOID-ARCHITECT", date: "2d ago", downloads: 5600, preview: "/images/node-fiber.png" },
+];
+
 
 // ══════════════════════════════════════
 // NODE HUB — Elite Community
@@ -283,6 +429,7 @@ export interface Thread {
   likes: number;
   hot: boolean;
   status: "OPEN" | "RESOLVED" | "PINNED";
+  imageUrl: string;
 }
 
 export interface Contributor {
@@ -307,48 +454,54 @@ export interface LiveTransmission {
 export const NODE_THREADS: Thread[] = [
   {
     id: "T-001", author: "CIPHER-7", avatar: "C7", role: "CORE ARCHITECT",
-    title: "Optimizing Framer Motion layoutId for mobile 120Hz displays?",
-    content: "On ProMotion displays, layoutId transitions show micro-jank at the 83ms boundary. I've profiled the reflow cascade — it's the measurement phase that's bottlenecking. Has anyone tried deferring the layout read to a rAF callback with useLayoutEffect?",
+    title: "LayoutId jank on 120Hz Displays",
+    content: "Measurement phase bottleneck resolved by deferring layout read to a rAF callback with useLayoutEffect. Cuts reflow by 40%.",
     timestamp: "12m ago", tags: ["#PERFORMANCE", "#MOTION", "#MOBILE"], replies: 23, likes: 89, hot: true, status: "OPEN",
+    imageUrl: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop",
   },
   {
     id: "T-002", author: "VOID-ARCHITECT", avatar: "VA", role: "VISUAL ENGINEER",
-    title: "Custom shader pipeline for backdrop-blur on Firefox",
-    content: "Firefox still doesn't support backdrop-filter with hardware acceleration. I've built a custom SVG filter chain that achieves 90% visual parity at 0.3ms cost. Sharing the implementation for peer review.",
+    title: "Custom Backdrop Blur Shader Stack",
+    content: "Built a custom SVG filter chain for Firefox that achieves 90% visual parity with hardware backdrop-filter at 0.3ms cost.",
     timestamp: "1h ago", tags: ["#SHADERS", "#CSS", "#FIREFOX"], replies: 45, likes: 134, hot: true, status: "OPEN",
+    imageUrl: "https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=2832&auto=format&fit=crop",
   },
   {
     id: "T-003", author: "GOLD-STANDARD", avatar: "GS", role: "DESIGN LEAD",
-    title: "Variable font optical sizing for dark interfaces — solved",
-    content: "After 6 months of testing: Playfair Display needs +0.02em letter-spacing at weights below 500 on dark backgrounds. The counter-forms collapse visually. Also discovered that text-rendering: geometricPrecision actually improves gold gradient legibility by 15%.",
+    title: "Variable Font Sizing for Dark Interfaces",
+    content: "Playfair Display requires +0.02em letter-spacing at weights below 500 on dark backgrounds to prevent counter-form collapse.",
     timestamp: "3h ago", tags: ["#TYPOGRAPHY", "#DESIGN", "#A11Y"], replies: 67, likes: 201, hot: true, status: "RESOLVED",
+    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
   },
   {
     id: "T-004", author: "ARCHITECT-X", avatar: "AX", role: "PROTOCOL DESIGNER",
-    title: "Next.js 14 streaming SSR with Framer Motion — edge cases",
-    content: "When using streaming SSR with AnimatePresence, the initial server-rendered frame can flash before the client hydrates the motion values. The fix: suppressHydrationWarning on the motion wrapper + initial={{ opacity: 0 }} with a client-only mount check.",
+    title: "Edge SSR Streaming & Framer Motion",
+    content: "SuppressHydrationWarning + initial={{ opacity: 0 }} solves the initial frame flash before client motion values hydrate.",
     timestamp: "5h ago", tags: ["#NEXTJS", "#SSR", "#HYDRATION"], replies: 31, likes: 78, hot: false, status: "RESOLVED",
+    imageUrl: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=2670&auto=format&fit=crop",
   },
   {
     id: "T-005", author: "NODE-451", avatar: "N4", role: "SYSTEMS DEV",
-    title: "Lenis + React-Three-Fiber scroll conflicts",
-    content: "When Lenis and R3F's ScrollControls coexist, the wheel events fight for control. Solution: disable Lenis smoothWheel within the R3F canvas bounds using a MutationObserver to detect the canvas mount, then pipe events through a unified dispatcher.",
+    title: "Lenis + R3F Scroll Conflict Unification",
+    content: "Disabled Lenis smoothWheel within R3F canvas bounds and routed wheel events through a unified central dispatcher.",
     timestamp: "8h ago", tags: ["#SCROLL", "#THREE", "#LENIS"], replies: 19, likes: 56, hot: false, status: "OPEN",
+    imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2670&auto=format&fit=crop",
   },
   {
     id: "T-006", author: "CRYSTAL-NODE", avatar: "CN", role: "UI ENGINEER",
-    title: "Zero-layout-shift image loading with blurhash + SQIP",
-    content: "Combining blurhash (for color) with SQIP (for structure) gives you a 98% perceived-instant image load. The trick is generating the SQIP at build time and inlining it as a data URI in the initial SSR payload. Images appear to 'materialize' rather than pop in.",
+    title: "Zero-CLS Blurhash Image Loading",
+    content: "Generating SQIP at build time and inlining as data URI in initial SSR payload creates a 98% perceived-instant load.",
     timestamp: "14h ago", tags: ["#IMAGES", "#PERFORMANCE", "#UX"], replies: 42, likes: 167, hot: false, status: "PINNED",
+    imageUrl: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2670&auto=format&fit=crop",
   },
 ];
 
 export const TOP_CONTRIBUTORS: Contributor[] = [
-  { id: "C-001", name: "CIPHER-7", avatar: "C7", role: "CORE ARCHITECT", contributions: 342, streak: 47, specialty: "Motion Physics" },
-  { id: "C-002", name: "VOID-ARCHITECT", avatar: "VA", role: "VISUAL ENGINEER", contributions: 289, streak: 31, specialty: "Shader Systems" },
-  { id: "C-003", name: "GOLD-STANDARD", avatar: "GS", role: "DESIGN LEAD", contributions: 256, streak: 62, specialty: "Typography" },
-  { id: "C-004", name: "ARCHITECT-X", avatar: "AX", role: "PROTOCOL DESIGNER", contributions: 198, streak: 28, specialty: "SSR Patterns" },
-  { id: "C-005", name: "NODE-451", avatar: "N4", role: "SYSTEMS DEV", contributions: 167, streak: 15, specialty: "Performance" },
+  { id: "C-001", name: "CIPHER-7", avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?q=80&w=2667&auto=format&fit=crop", role: "CORE ARCHITECT", contributions: 342, streak: 47, specialty: "Motion Physics" },
+  { id: "C-002", name: "VOID-ARCHITECT", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop", role: "VISUAL ENGINEER", contributions: 289, streak: 31, specialty: "Shader Systems" },
+  { id: "C-003", name: "GOLD-STANDARD", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop", role: "DESIGN LEAD", contributions: 256, streak: 62, specialty: "Typography" },
+  { id: "C-004", name: "ARCHITECT-X", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2564&auto=format&fit=crop", role: "PROTOCOL DESIGNER", contributions: 198, streak: 28, specialty: "SSR Patterns" },
+  { id: "C-005", name: "NODE-451", avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=2574&auto=format&fit=crop", role: "SYSTEMS DEV", contributions: 167, streak: 15, specialty: "Performance" },
 ];
 
 export const LIVE_TRANSMISSIONS: LiveTransmission[] = [
@@ -358,6 +511,17 @@ export const LIVE_TRANSMISSIONS: LiveTransmission[] = [
   { id: "L-004", author: "GOLD-STANDARD", avatar: "GS", content: "const opticalAdjust = weight < 500 ? '0.02em' : '0em';\n// Apply to all headings on dark bg", timestamp: "15m ago", type: "CODE" },
   { id: "L-005", author: "NODE-451", avatar: "N4", content: "Benchmarked the Lenis dispatcher — unified scroll handling reduces event listeners from 12 to 1. Memory footprint down 60%.", timestamp: "22m ago", type: "MESSAGE" },
   { id: "L-006", author: "SYSTEM", avatar: "SY", content: "ACADEMY: 'Architecting the Void' course updated — 2 new chapters on R3F post-processing.", timestamp: "30m ago", type: "SYSTEM" },
+];
+
+export const SYSTEM_TICKER_UPDATES = [
+  "REGISTRY v2.4.0 deployed — 2 new BLACK EDITION components",
+  "CIPHER-7 earned ARCHITECT rank — 342 contributions",
+  "NODE-451 resolved Lenis scroll conflict — merged to main",
+  "ACADEMY: 'Architecting the Void' — Chapter 6 live",
+  "SYSTEM: Global latency reduced to 8ms avg",
+  "GOLD-STANDARD published Typography Research #47",
+  "FOUNDRY: Component injection protocol updated",
+  "VOID-ARCHITECT pushed Firefox blur shim v2.1",
 ];
 
 // ══════════════════════════════════════
@@ -386,7 +550,7 @@ export const MASTERCLASSES: Masterclass[] = [
     id: "M-001",
     title: "Architecting the Void",
     subtitle: "Advanced React Three Fiber & WebGL",
-    description: "Master the art of 3D rendering in React. From custom shaders to post-processing pipelines, build cinematic experiences that blur the line between web and film. Every frame is a composition.",
+    description: "Master real-time rendering in React. Create post-processing pipelines and cinematic WebGL experiences that blur the line between web and film.",
     instructor: "CIPHER-7",
     instructorRole: "Gestaltung Core Team",
     duration: "04:12:00",
@@ -396,13 +560,13 @@ export const MASTERCLASSES: Masterclass[] = [
     accentColor: "#D4AF37",
     tags: ["WEBGL", "R3F", "SHADERS", "3D"],
     chapters: ["The Void Canvas", "Geometry as Language", "Custom Shader Materials", "Post-Processing Stack", "Performance at 60fps"],
-    image: "/images/gold-neural-streams.png",
+    image: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=2574&auto=format&fit=crop",
   },
   {
     id: "M-002",
     title: "Fluid Typography & Micro-Interactions",
     subtitle: "The Science of Typographic Motion",
-    description: "Typography is not decoration — it is architecture. Learn variable font animation, optical sizing for dark interfaces, split-text reveals, and the mathematics of reading rhythm. Make every letter breathe.",
+    description: "Learn variable font animation, optical sizing for dark interfaces, and split-text typography reveals. Make every letter breathe.",
     instructor: "GOLD-STANDARD",
     instructorRole: "Gestaltung Core Team",
     duration: "03:45:00",
@@ -412,13 +576,13 @@ export const MASTERCLASSES: Masterclass[] = [
     accentColor: "#F3E5AB",
     tags: ["TYPOGRAPHY", "ANIMATION", "VARIABLE-FONTS", "UX"],
     chapters: ["Type as Architecture", "Variable Font Mastery", "Split-Text Choreography", "Micro-Interaction Physics"],
-    image: "/images/gold-hexagon-grid.png",
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
   },
   {
     id: "M-003",
     title: "The Scroll Protocol",
     subtitle: "Physics-Based Navigation Systems",
-    description: "Scroll is the most intimate interaction on the web. Master Lenis configuration, velocity-mapped parallax, scroll-linked state machines, and the art of making interfaces feel heavy, expensive, and inevitable.",
+    description: "Master Lenis configuration, velocity parallax, and scroll-linked state machines. Create interfaces that feel expensive and inevitable.",
     instructor: "VOID-ARCHITECT",
     instructorRole: "Gestaltung Core Team",
     duration: "05:30:00",
@@ -428,13 +592,13 @@ export const MASTERCLASSES: Masterclass[] = [
     accentColor: "#AA8C2C",
     tags: ["SCROLL", "LENIS", "PARALLAX", "PHYSICS"],
     chapters: ["Scroll as Material", "Lenis Deep Configuration", "Velocity-Mapped Parallax", "Scroll State Machines", "The Heavy Interface"],
-    image: "/images/gold-pulse-particles.png",
+    image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop",
   },
   {
     id: "M-004",
     title: "Dark Interface Systems",
     subtitle: "Design Engineering for Premium UX",
-    description: "Build design systems for the void. From glassmorphism depth stacking to noise textures, vignettes, and the mathematics of the Void & Gold palette. Every pixel must breathe. If it looks like a dashboard, you have failed.",
+    description: "Design systems for the void. Depth stacking, noise textures, and the mathematics of the Black Edition palette. Every pixel must breathe.",
     instructor: "ARCHITECT-X",
     instructorRole: "Gestaltung Core Team",
     duration: "04:00:00",
@@ -444,9 +608,54 @@ export const MASTERCLASSES: Masterclass[] = [
     accentColor: "#8A7E5E",
     tags: ["DESIGN-SYSTEMS", "GLASSMORPHISM", "COLOR", "DARK-UI"],
     chapters: ["The Void Philosophy", "Glassmorphism Depth", "Noise & Texture", "Gold as Language"],
-    image: "/images/node-fiber.png",
+    image: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=2670&auto=format&fit=crop",
   },
 ];
+
+export const INSTRUCTORS = [
+  {
+    id: "I-001",
+    name: "CIPHER-7",
+    title: "Lead WebGL Architect",
+    bio: "12 years in GPU programming. Former Pixar rendering engineer. Specializes in custom shader pipelines and real-time 3D on the web. Believes every frame is a composition.",
+    courses: 3,
+    students: 8400,
+    avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?q=80&w=2667&auto=format&fit=crop",
+    specialty: "WebGL & Shaders",
+  },
+  {
+    id: "I-002",
+    name: "GOLD-STANDARD",
+    title: "Typography Director",
+    bio: "Obsessed with the mathematics of letterforms. 8 years designing type systems for luxury brands. Pioneered optical sizing algorithms for dark interfaces.",
+    courses: 2,
+    students: 6200,
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop",
+    specialty: "Typography & Motion",
+  },
+  {
+    id: "I-003",
+    name: "VOID-ARCHITECT",
+    title: "Scroll Physics Engineer",
+    bio: "Created the Lenis deep configuration guide. Former game physics developer at Naughty Dog. Applies AAA game physics to web interfaces.",
+    courses: 4,
+    students: 9100,
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop",
+    specialty: "Scroll & Physics",
+  },
+];
+
+export const CURRICULUM_NODES = [
+  { id: "CH-01", chapter: "01", title: "The Void Canvas", description: "Setup R3F, configure renderer pipeline, establish the void.", completed: true },
+  { id: "CH-02", chapter: "02", title: "Geometry as Language", description: "Primitive composition, instanced meshes, buffer geometry.", completed: true },
+  { id: "CH-03", chapter: "03", title: "Custom Shader Materials", description: "GLSL fundamentals, uniforms, varyings, noise functions.", completed: true },
+  { id: "CH-04", chapter: "04", title: "Post-Processing Stack", description: "Bloom, chromatic aberration, noise, vignette pipelines.", completed: false },
+  { id: "CH-05", chapter: "05", title: "Performance at 60fps", description: "Profiling, instancing, LOD, occlusion culling.", completed: false },
+  { id: "CH-06", chapter: "06", title: "Scroll-Linked 3D", description: "Connecting Lenis scroll to camera, geometry, and shaders.", completed: false },
+  { id: "CH-07", chapter: "07", title: "The Gold Palette", description: "Metallic materials, PBR tuning, environment maps.", completed: false },
+  { id: "CH-08", chapter: "08", title: "Final Composition", description: "Scene orchestration, timing, and cinematic delivery.", completed: false },
+];
+
 
 // ══════════════════════════════════════
 // FOUNDRY — The Laboratory
@@ -531,10 +740,21 @@ export default function ParticleBurstButton() {
 export const FOUNDRY_COMMANDS = [
   { label: "Deploy Component", shortcut: "⌘+D", action: "deploy" },
   { label: "Run Diagnostics", shortcut: "⌘+R", action: "diagnose" },
+  { label: "Simulate Physics", shortcut: "⌘+F", action: "simulate" },
   { label: "Inject Styling", shortcut: "⌘+S", action: "style" },
   { label: "Export Protocol", shortcut: "⌘+E", action: "export" },
   { label: "Toggle Preview", shortcut: "⌘+P", action: "preview" },
+  { label: "Wipe Console", shortcut: "⌘+W", action: "wipe" },
   { label: "Clear Console", shortcut: "⌘+K", action: "clear" },
+];
+
+export const FOUNDRY_COMPONENTS = [
+  { id: "FC-01", name: "Button", icon: "□", color: "#D4AF37", imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" },
+  { id: "FC-02", name: "Card", icon: "▢", color: "#F3E5AB", imageUrl: "https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=2832&auto=format&fit=crop" },
+  { id: "FC-03", name: "Input", icon: "▭", color: "#AA8C2C", imageUrl: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop" },
+  { id: "FC-04", name: "Modal", icon: "▣", color: "#D4AF37", imageUrl: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=2670&auto=format&fit=crop" },
+  { id: "FC-05", name: "Table", icon: "▦", color: "#F3E5AB", imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2670&auto=format&fit=crop" },
+  { id: "FC-06", name: "Chart", icon: "◈", color: "#AA8C2C", imageUrl: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2670&auto=format&fit=crop" },
 ];
 
 // ══════════════════════════════════════
@@ -543,27 +763,24 @@ export const FOUNDRY_COMMANDS = [
 
 export const MANIFESTO_LINES = [
   { type: "heading" as const, text: "CODE IS THE NEW LUXURY MATERIAL." },
-  { type: "body" as const, text: "We reject the doctrine of 'move fast and break things.' We build with the precision of Swiss watchmakers and the atmosphere of Brutalist architects. Every interface we create is a synthesis of engineering discipline and visual poetry." },
-  { type: "body" as const, text: "In an ocean of generic templates and disposable UI kits, we stand as the uncompromising alternative. Our protocols are not designed for everyone — they are engineered for the 1% of developers who understand that a 2-pixel misalignment is a structural failure, not a cosmetic issue." },
+  { type: "body" as const, text: "We reject the doctrine of 'move fast and break things.' We engineer digital architecture for the 1% who understand that a 2-pixel misalignment is a structural failure, not a cosmetic issue." },
   { type: "heading" as const, text: "THE VOID IS NOT EMPTY. IT IS PRECISE." },
-  { type: "body" as const, text: "The void (#050505) is not absence — it is the most intentional design decision in our system. It is the canvas upon which every gold particle, every glassmorphic surface, and every typographic choice gains its meaning. Without the void, there is no atmosphere." },
-  { type: "body" as const, text: "Our motion protocols are not decorative. A 0.06 lerp scroll feel is the result of 47 tested configurations across 12 devices. A 700ms hover transition is calibrated to match the cognitive threshold between 'instant' and 'perceived.' Nothing is arbitrary." },
+  { type: "body" as const, text: "Every gold particle, every glassmorphic surface, and every 0.06 lerp scroll feel is calibrated to the limit. Nothing is arbitrary." },
   { type: "heading" as const, text: "WE ARE ARCHITECTS, NOT ASSEMBLERS." },
-  { type: "body" as const, text: "Gestaltung exists for those who see code as bespoke digital architecture. We don't drag and drop — we compose. We don't configure — we engineer. Every component in our Registry has been stress-tested at 240fps, profiled for memory leaks, and validated against the highest visual standards on Earth." },
   { type: "body" as const, text: "This is not a platform. It is a protocol. And you are now part of it." },
 ];
 
 export const ABOUT_TIMELINE = [
-  { year: "2024", event: "Protocol conceived. First void experiments. The gold palette is calibrated.", phase: "GENESIS" },
-  { year: "2025", event: "Black Edition framework established. Lenis integration. Registry v1.0 launches with 12 components.", phase: "FOUNDATION" },
-  { year: "2026", event: "Full protocol deployment. Neural Hub live. Academy opens. 200+ components. Global collective of 4,000+ architects.", phase: "SYNTHESIS" },
+  { year: "2024", event: "Protocol conceived. First void experiments. The gold palette is calibrated.", phase: "GENESIS", epoch: "EPOCH I" },
+  { year: "2025", event: "Black Edition framework established. Lenis integration. Registry v1.0 launches with 12 components.", phase: "FOUNDATION", epoch: "EPOCH II" },
+  { year: "2026", event: "Full protocol deployment. Neural Hub live. Academy opens. 200+ components. Global collective of 4,000+ architects.", phase: "SYNTHESIS", epoch: "EPOCH III" },
 ];
 
 export const ABOUT_PRINCIPLES = [
-  { title: "SYNTHESIS", desc: "Every element exists in relation to every other. Isolation is a design failure.", icon: "hexagon" },
-  { title: "PRECISION", desc: "Sub-pixel accuracy. 0.02em letter-spacing adjustments. Nothing is approximate.", icon: "target" },
-  { title: "ATMOSPHERE", desc: "If it doesn't feel cinematic, it doesn't ship. Texture, depth, weight.", icon: "eye" },
-  { title: "UNCOMPROMISING", desc: "We do not negotiate on quality. A 95% component is a 0% component.", icon: "shield" },
+  { id: "P-001", title: "SYNTHESIS", description: "Every element exists in relation to every other. Isolation is a design failure.", desc: "Every element exists in relation to every other. Isolation is a design failure.", icon: "hexagon" },
+  { id: "P-002", title: "PRECISION", description: "Sub-pixel accuracy. 0.02em letter-spacing adjustments. Nothing is approximate.", desc: "Sub-pixel accuracy. 0.02em letter-spacing adjustments. Nothing is approximate.", icon: "target" },
+  { id: "P-003", title: "ATMOSPHERE", description: "If it doesn't feel cinematic, it doesn't ship. Texture, depth, weight.", desc: "If it doesn't feel cinematic, it doesn't ship. Texture, depth, weight.", icon: "eye" },
+  { id: "P-004", title: "UNCOMPROMISING", description: "We do not negotiate on quality. A 95% component is a 0% component.", desc: "We do not negotiate on quality. A 95% component is a 0% component.", icon: "shield" },
 ];
 
 // ══════════════════════════════════════

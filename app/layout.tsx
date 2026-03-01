@@ -5,6 +5,7 @@ import SmoothScroll from "@/components/layout/smooth-scroll";
 import CinematicNoise from "@/components/ui/cinematic-noise";
 import ScrollProgress from "@/components/ui/scroll-progress";
 import Navbar from "@/components/layout/navbar";
+import PageTransitionProvider from "@/components/layout/page-transition";
 
 const playfair = Playfair_Display({
     subsets: ["latin"],
@@ -27,12 +28,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en" className={`${playfair.variable} ${jetbrains.variable}`}>
-            <body className="relative">
+            <body className="relative bg-[#050505]">
                 <SmoothScroll>
                     <Navbar />
                     <ScrollProgress />
                     <CinematicNoise />
-                    {children}
+                    <PageTransitionProvider>
+                        {children}
+                    </PageTransitionProvider>
                 </SmoothScroll>
             </body>
         </html>

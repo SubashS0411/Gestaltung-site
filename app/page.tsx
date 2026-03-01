@@ -1,53 +1,29 @@
 "use client";
 
 import Hero from "@/components/sections/hero";
-import Manifesto from "@/components/sections/manifesto";
-import NeuralNodes from "@/components/sections/neural-nodes";
-import RegistrySlider from "@/components/sections/registry-slider";
-import FooterMicDrop from "@/components/sections/footer-mic-drop";
-import ScrollInterlude from "@/components/sections/scroll-interlude";
-import ProtocolGrid from "@/components/sections/protocol-grid";
+import PhilosophySection from "@/components/sections/philosophy-section";
+import ArsenalPreview from "@/components/sections/arsenal-preview";
+import FeaturedComponents from "@/components/sections/featured-components";
+import LiveMetrics from "@/components/sections/live-metrics";
+import ProcessSection from "@/components/sections/process-section";
+import ArchitectVoices from "@/components/sections/architect-voices";
+import GlobalGrid from "@/components/sections/global-grid";
+import CTAFooter from "@/components/sections/cta-footer";
 import Preloader from "@/components/ui/preloader";
 
 export default function Home() {
     return (
         <main className="bg-[#050505] min-h-screen selection:bg-[#D4AF37] selection:text-black">
             <Preloader onComplete={() => { }} />
-
-            {/* SECTION A: Atmospheric Hero */}
             <Hero />
-
-            {/* INTERLUDE 1 */}
-            <ScrollInterlude
-                topText="THE PROTOCOL"
-                headline="Precision engineered for the void."
-                subtext="A digital experience that feels heavy, expensive, and inevitable. Every interaction carries weight."
-                backgroundImage="/images/gold-hexagon-grid.png"
-            />
-
-            {/* SECTION B: The Manifesto */}
-            <Manifesto />
-
-            {/* SECTION C: Protocol Specifications */}
-            <ProtocolGrid />
-
-            {/* INTERLUDE 2 */}
-            <ScrollInterlude
-                topText="INFRASTRUCTURE"
-                headline="Where design meets engineering."
-                subtext="Three neural nodes. Twelve regions. Sub-millisecond latency. The backbone of cinematic validation."
-                gradient="radial-gradient(ellipse 70% 50% at 50% 40%, rgba(212,175,55,0.04) 0%, transparent 70%)"
-                backgroundImage="/images/gold-pulse-particles.png"
-            />
-
-            {/* SECTION D: Neural Nodes (Zig-Zag with images) */}
-            <NeuralNodes />
-
-            {/* SECTION E: Registry (Horizontal scroll) */}
-            <RegistrySlider />
-
-            {/* SECTION F: The Mic Drop */}
-            <FooterMicDrop />
+            <PhilosophySection />
+            <ArsenalPreview />
+            <FeaturedComponents />
+            <LiveMetrics />
+            <ProcessSection />
+            <ArchitectVoices />
+            <GlobalGrid />
+            <CTAFooter />
         </main>
     );
 }

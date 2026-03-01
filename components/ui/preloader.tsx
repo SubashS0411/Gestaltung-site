@@ -3,32 +3,29 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Preloader({ onComplete }: { onComplete: () => void }) {
-    const [phase, setPhase] = useState<"line" | "logo" | "text" | "reveal">("line");
-    const [typedText, setTypedText] = useState("");
+interface PreloaderProps {
+    onComplete: () => void;
+}
+
+const SPRING_SNAPPY = { type: "spring" as const, stiffness: 400, damping: 25 };
+
+export default function Preloader({ onComplete }: PreloaderProps) {
+    const [phase, setPhase] = useState(0); // 0=black, 1=line, 2=text, 3=shake, 4=curtain, 5=done
     const [visible, setVisible] = useState(true);
-    const fullText = "INITIALIZING NEURAL PROTOCOL...";
 
     useEffect(() => {
         const timers: NodeJS.Timeout[] = [];
-        timers.push(setTimeout(() => setPhase("logo"), 800));
-        timers.push(setTimeout(() => setPhase("text"), 1800));
-        timers.push(setTimeout(() => setPhase("reveal"), 3200));
+        timers.push(setTimeout(() => setPhase(1), 300));   // Gold line strikes
+        timers.push(setTimeout(() => setPhase(2), 900));   // Text masks in
+        timers.push(setTimeout(() => setPhase(3), 1800));  // Bass drop shake
+        timers.push(setTimeout(() => setPhase(4), 2600));  // Curtains split
         timers.push(setTimeout(() => {
+            setPhase(5);
             setVisible(false);
             onComplete();
-        }, 4200));
+        }, 3800));
         return () => timers.forEach(clearTimeout);
     }, [onComplete]);
-
-    useEffect(() => {
-        if (phase !== "text" && phase !== "reveal") return;
-        if (typedText.length >= fullText.length) return;
-        const t = setTimeout(() => {
-            setTypedText(fullText.slice(0, typedText.length + 1));
-        }, 40);
-        return () => clearTimeout(t);
-    }, [phase, typedText, fullText]);
 
     if (!visible) return null;
 
@@ -37,77 +34,90 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
             {visible && (
                 <motion.div
                     key="preloader"
-                    className="fixed inset-0 z-[100] flex items-center justify-center"
-                    initial={{ opacity: 1 }}
+                    className="fixed inset-0 z-[100] bg-[#050505] flex items-center justify-center overflow-hidden"
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.3 }}
                 >
-                    {/* Left curtain */}
+                    {/* Bass-drop screen shake */}
                     <motion.div
-                        className="absolute top-0 left-0 w-1/2 h-full bg-[#050505]"
-                        animate={phase === "reveal" ? { x: "-100%" } : {}}
-                        transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
-                    />
-                    {/* Right curtain */}
-                    <motion.div
-                        className="absolute top-0 right-0 w-1/2 h-full bg-[#050505]"
-                        animate={phase === "reveal" ? { x: "100%" } : {}}
-                        transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
-                    />
-
-                    {/* Content */}
-                    <div className="relative z-10 flex flex-col items-center gap-8">
-                        {/* Gold line */}
+                        className="absolute inset-0 flex items-center justify-center"
+                        animate={phase >= 3 ? { y: [0, 6, -6, 3, -3, 0], x: [0, -3, 3, -2, 2, 0] } : {}}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                    >
+                        {/* Gold line strike */}
                         <motion.div
-                            className="w-48 h-[1px] bg-gold"
+                            className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px]"
                             initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                        />
-
-                        {/* Hexagon logo */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={
-                                phase === "logo" || phase === "text" || phase === "reveal"
-                                    ? { opacity: 1, scale: 1 }
-                                    : {}
-                            }
-                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                            animate={phase >= 1 ? { scaleX: 1 } : {}}
+                            transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
                         >
-                            <svg viewBox="0 0 100 100" className="w-16 h-16">
-                                <defs>
-                                    <linearGradient id="preGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stopColor="#D4AF37" />
-                                        <stop offset="50%" stopColor="#F3E5AB" />
-                                        <stop offset="100%" stopColor="#D4AF37" />
-                                    </linearGradient>
-                                </defs>
-                                <polygon
-                                    points="50,5 93,27 93,73 50,95 7,73 7,27"
-                                    fill="none"
-                                    stroke="url(#preGold)"
-                                    strokeWidth="1"
-                                />
-                                <polygon
-                                    points="50,25 72,37 72,63 50,75 28,63 28,37"
-                                    fill="none"
-                                    stroke="url(#preGold)"
-                                    strokeWidth="0.5"
-                                    opacity="0.5"
-                                />
-                                <circle cx="50" cy="50" r="3" fill="#D4AF37" />
-                            </svg>
+                            <div className="w-full h-full bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
+                            {/* Line glow */}
+                            <div className="absolute inset-0 blur-sm bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent" />
                         </motion.div>
 
-                        {/* Typewriter text */}
-                        <div className="h-5">
-                            <span className="font-mono text-[10px] text-gold/60 tracking-[0.3em]">
-                                {typedText}
-                                <span className="animate-pulse text-gold">▎</span>
-                            </span>
+                        {/* "INITIALIZING PROTOCOL" text — clip-path wipe from center */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-8">
+                            <motion.p
+                                className="font-mono text-[9px] text-gold/90 tracking-[0.6em] whitespace-nowrap"
+                                initial={{ clipPath: "inset(0 50% 0 50%)" }}
+                                animate={phase >= 2 ? { clipPath: "inset(0 0% 0 0%)" } : {}}
+                                transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
+                            >
+                                INITIALIZING PROTOCOL
+                            </motion.p>
                         </div>
-                    </div>
+
+                        {/* Main title — aggressive clip-path slice */}
+                        <div className="relative">
+                            <motion.h1
+                                className="font-serif text-6xl sm:text-8xl md:text-9xl text-white tracking-[0.1em] select-none"
+                                initial={{ clipPath: "inset(0 50% 0 50%)" }}
+                                animate={phase >= 2 ? { clipPath: "inset(0 0% 0 0%)" } : {}}
+                                transition={{ duration: 0.6, delay: 0.15, ease: [0.76, 0, 0.24, 1] }}
+                            >
+                                GESTALTUNG
+                            </motion.h1>
+                            {/* Gold reflection line under text */}
+                            <motion.div
+                                className="absolute -bottom-3 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent"
+                                initial={{ scaleX: 0 }}
+                                animate={phase >= 2 ? { scaleX: 1 } : {}}
+                                transition={{ duration: 0.5, delay: 0.3, ease: [0.76, 0, 0.24, 1] }}
+                            />
+                        </div>
+
+                        {/* Phase badge */}
+                        <motion.div
+                            className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-3"
+                            initial={{ opacity: 0 }}
+                            animate={phase >= 2 ? { opacity: 1 } : {}}
+                            transition={{ delay: 0.4 }}
+                        >
+                            <div className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
+                            <span className="font-mono text-[7px] text-white/70 tracking-[0.4em]">BLACK EDITION v2.4</span>
+                        </motion.div>
+                    </motion.div>
+
+                    {/* Curtain split — left */}
+                    <motion.div
+                        className="absolute inset-y-0 left-0 w-1/2 bg-[#050505] z-20"
+                        initial={{ x: 0 }}
+                        animate={phase >= 4 ? { x: "-105%" } : {}}
+                        transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
+                    >
+                        <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-[#D4AF37]/30 to-transparent" />
+                    </motion.div>
+
+                    {/* Curtain split — right */}
+                    <motion.div
+                        className="absolute inset-y-0 right-0 w-1/2 bg-[#050505] z-20"
+                        initial={{ x: 0 }}
+                        animate={phase >= 4 ? { x: "105%" } : {}}
+                        transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
+                    >
+                        <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-[#D4AF37]/30 to-transparent" />
+                    </motion.div>
                 </motion.div>
             )}
         </AnimatePresence>
